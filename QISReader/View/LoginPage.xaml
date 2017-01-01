@@ -1,0 +1,69 @@
+﻿<Page
+    x:Class="QISReader.LoginPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QISReader"
+    xmlns:vm="using:QISReader.ViewModel"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.DataContext>
+        <vm:LoginViewModel/>
+    </Page.DataContext>
+    
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Dictionaries/Dictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <RelativePanel Background="White" KeyDown="RelativePanel_KeyDown">
+        <RelativePanel RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True">
+            <StackPanel Name="HochschulauswahlStackPanel" RelativePanel.AlignHorizontalCenterWithPanel="True">
+                <TextBlock Text="Wähle deine Hochschule:" Margin="10" FontSize="16" FontWeight="Bold"/>
+                <ListBox Name="MyListBox" SelectionMode="Single" SelectedItem="{x:Bind ViewModel.SelectedHochschule, Mode=TwoWay}" Width="500" Height="300" Margin="10" ItemsSource="{Binding Hochschulnamen}"/>
+            </StackPanel>
+
+            <TextBox Name="UsernameTextBox" RelativePanel.Below="HochschulauswahlStackPanel" RelativePanel.AlignHorizontalCenterWith="HochschulauswahlStackPanel" Margin="10,20,10,10" Width="400" GotFocus="UsernameTextBox_GotFocus" Text="{x:Bind ViewModel.Nutzername, Mode=TwoWay}" />
+            <TextBlock Name="UsernameTextBlock" RelativePanel.LeftOf="UsernameTextBox" RelativePanel.AlignVerticalCenterWith="UsernameTextBox" Text="Nutzername:" Margin="10" FontSize="16" FontWeight="Bold" />
+
+            <PasswordBox Name="PasswordBox" RelativePanel.Below="UsernameTextBox" RelativePanel.AlignHorizontalCenterWith="HochschulauswahlStackPanel" Width="400" Margin="10" GotFocus="PasswordBox_GotFocus" Password="{x:Bind ViewModel.Passwort, Mode=TwoWay}"/>
+            <TextBlock Text="Passwort:" RelativePanel.LeftOf="PasswordBox" RelativePanel.AlignVerticalCenterWith="PasswordBox" Margin="10" FontSize="16" FontWeight="Bold"/>
+
+            <Button Name="AnmeldeButton" RelativePanel.Below="PasswordBox" RelativePanel.AlignHorizontalCenterWithPanel="True" Grid.Column="1" Background="{StaticResource AccentBrush}" Width="400" Margin="10,20,10,10" Command="{Binding LoginButtonClicked}">
+                <TextBlock Text="Anmelden" Foreground="White"/>
+            </Button>
+
+
+            <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1" RelativePanel.Below="AnmeldeButton" RelativePanel.AlignLeftWith="AnmeldeButton">
+                <ProgressRing Name="LoginProgressRing" Width="30" Height="30" IsActive="True" Foreground="{StaticResource AccentBrush}" Margin="20,10,10,10" Visibility="Collapsed"></ProgressRing>
+                <TextBlock Name="ProgressText" Foreground="{StaticResource AccentBrush}" Margin="10, 15, 10, 10" Visibility="Visible"/>
+            </StackPanel>
+
+
+        </RelativePanel>
+        <HyperlinkButton Name="InfoTextBox" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignBottomWithPanel="True" Content="Wie werden meine Daten verarbeitet?" Margin="10" Foreground="DodgerBlue" Tapped="InfoTextBox_Tapped"/>
+        <Grid Name="InfoPanel" RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignBottomWithPanel="True" Margin="15" Visibility="Collapsed">
+            <Rectangle Fill="LightGray" />
+            <!--<TextBlock TextWrapping="Wrap" Width="275" Text="Das Passwort wird lokal verschlüsselt gespeichert.
+                       
+                       Die App simuliert einen Webbrowser und nutzt Nutzername und Passwort um sich auf der Qis-Seite Deiner Hochschule anzumelden. Noten und Notendurchschnitt werden lokal abgespeichert." Margin="50, 20, 50, 50"/>-->
+            <TextBlock TextWrapping="Wrap" Width="275" Text="{x:Bind ViewModel.InfoText}" Margin="50, 20, 50, 50"/>
+            <Button Name="InfoCloseButton" Content="Ok!" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="10" Click="InfoCloseButton_Click"/>
+        </Grid>
+        
+    </RelativePanel>
+    <VisualStateManager.VisualStateGroups>
+        <VisualStateGroup>
+            <VisualState x:Name="InfoTextBoxHover">
+                <VisualState.Setters>
+                    <Setter Target="RootGrid.(UIElement.Opacity)" Value="0.5" />
+                </VisualState.Setters>
+               </VisualState>
+        </VisualStateGroup>        
+    </VisualStateManager.VisualStateGroups>
+    
+</Page>

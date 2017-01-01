@@ -1,0 +1,1 @@
+﻿Das Passwort wird lokal verschlüsselt gespeichert. Die App simuliert einen Webbrowser und nutzt Nutzername und Passwort um sich auf der Qis-Seite Deiner Hochschule anzumelden. Noten und Notendurchschnitt werden lokal abgespeichert.

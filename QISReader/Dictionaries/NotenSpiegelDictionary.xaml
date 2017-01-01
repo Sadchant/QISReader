@@ -1,0 +1,114 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QISReader">
+
+    <!--Resourcen für Daten-Tabelle-->
+
+    <Style TargetType="TextBlock" x:Key="datenBeschriftungStyle">
+        <Setter Property="Grid.Column" Value="1" />
+        <Setter Property="Margin" Value="0,0,0,4" />
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="datenWerteStyle">
+        <Setter Property="Grid.Column" Value="3" />
+        <Setter Property="Margin" Value="0,0,0,4" />
+        <Setter Property="FontSize" Value="20" />
+    </Style>
+
+    <Style TargetType="Rectangle" x:Key="datenRectStyle">
+        <Setter Property="Width" Value="350" />
+        <Setter Property="Height" Value="1" />
+        <Setter Property="Grid.Column" Value="1" />
+        <Setter Property="Grid.ColumnSpan" Value="4" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Fill" Value="Black" />
+    </Style>
+
+
+    <!--Resourcen für VerteilungsPages-->
+    
+    <GridLength x:Key="balkenBreite">100</GridLength>
+    <GridLength x:Key="zwischenraumBreite">25</GridLength>
+
+    <SolidColorBrush x:Key="beschriftungBrush" Color="LightGray" />
+
+    <Style TargetType="Rectangle" x:Key="hintergrundLinienStyle">
+        <Setter Property="Grid.Column" Value="1" />
+        <Setter Property="Fill" Value="{StaticResource beschriftungBrush}" />
+        <Setter Property="Grid.ColumnSpan" Value="11" />
+        <Setter Property="Height" Value="3" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="hintergrundSchriftStyle">
+        <Setter Property="Foreground" Value="{StaticResource beschriftungBrush}" />
+        <Setter Property="Grid.RowSpan" Value="2" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+
+    <Style TargetType="Rectangle" x:Key="balkenStyle" >
+        <Setter Property="Grid.Row" Value="1" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="notenBeschriftungStyle" >
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,10,0,0" />
+    </Style>
+
+    <Style TargetType="Border" x:Key="platzierterTextBorderStyle">
+        <Setter Property="Background" Value="White" />
+        <Setter Property="Grid.ColumnSpan" Value="3" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+
+    <Style TargetType="TextBlock" x:Key="anzahlTextStyle">
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
+
+
+
+    <Style TargetType="Rectangle" BasedOn="{StaticResource balkenStyle}" x:Key="dreierBalkenStyle">
+        <Setter Property="Grid.RowSpan" Value="2" />
+    </Style>
+
+    <Style TargetType="Rectangle" BasedOn="{StaticResource balkenStyle}" x:Key="viererBalkenStyle">
+        <Setter Property="Grid.RowSpan" Value="3" />
+    </Style>
+
+    <Style TargetType="Border" BasedOn="{StaticResource platzierterTextBorderStyle}" x:Key="dreierPlatzierterTextBorderStyle">
+        <Setter Property="Grid.RowSpan" Value="3" />
+    </Style>
+
+    <Style TargetType="Border" BasedOn="{StaticResource platzierterTextBorderStyle}" x:Key="viererPlatzierterTextBorderStyle">
+        <Setter Property="Grid.RowSpan" Value="4" />
+    </Style>
+
+    <Style TargetType="TextBlock" BasedOn="{StaticResource anzahlTextStyle}" x:Key="dreierAnzahlTextStyle">
+        <Setter Property="Grid.RowSpan" Value="3" />
+    </Style>
+
+    <Style TargetType="TextBlock" BasedOn="{StaticResource anzahlTextStyle}" x:Key="viererAnzahlTextStyle">
+        <Setter Property="Grid.RowSpan" Value="4" />
+    </Style>
+
+    <Style TargetType="TextBlock" BasedOn="{StaticResource notenBeschriftungStyle}" x:Key="dreierNotenBeschriftungStyle">
+        <Setter Property="Grid.Row" Value="3" />
+    </Style>
+
+    <Style TargetType="TextBlock" BasedOn="{StaticResource notenBeschriftungStyle}" x:Key="viererNotenBeschriftungStyle">
+        <Setter Property="Grid.Row" Value="4" />
+    </Style>
+
+</ResourceDictionary>

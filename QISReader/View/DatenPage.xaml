@@ -1,0 +1,107 @@
+﻿<Page
+    x:Class="QISReader.View.DatenPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QISReader.View"
+    xmlns:vm="using:QISReader.ViewModel"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.DataContext>
+        <vm:DatenViewModel/>
+    </Page.DataContext>
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Dictionaries/NotenSpiegelDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <StackPanel>
+        <TextBlock x:Name="DatenÜberschriftTextBlock" Grid.Column="1" Text="Einführung in die Medieninformatik - Praktikum" Margin="40,60,20,20" FontSize="30" TextWrapping="Wrap"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="20"/>
+            </Grid.ColumnDefinitions>
+        </Grid>
+        
+        <ListView ItemsSource="{x:Bind ViewModel.DatenList}" IsItemClickEnabled="False" IsHitTestVisible="False" Padding="0">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="MinHeight" Value="20"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="vm:Zeile">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Style="{StaticResource datenBeschriftungStyle}" Text="{x:Bind Beschriftung}"/>
+                        <TextBlock Style="{StaticResource datenWerteStyle}" Text="{x:Bind Inhalt}" />
+                        <Rectangle Style="{StaticResource datenRectStyle}"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        
+        
+        <!--<Grid x:Name="DatenTabelleGrid" Width="Auto" Background="White" HorizontalAlignment="Left">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+
+            <TextBlock Style="{StaticResource datenBeschriftungStyle}" Grid.Row="1" Text="Prüfungsnr"/>
+            <TextBlock Style="{StaticResource datenBeschriftungStyle}" Grid.Row="2" Text="Semester"/>
+            <TextBlock Style="{StaticResource datenBeschriftungStyle}" Grid.Row="3" Text="Termin"/>
+            <TextBlock Style="{StaticResource datenBeschriftungStyle}" Grid.Row="4" Text="Note"/>
+            <TextBlock Style="{StaticResource datenBeschriftungStyle}" Grid.Row="5" Text="Status"/>
+            <TextBlock Style="{StaticResource datenBeschriftungStyle}" Grid.Row="6" Text="Credit Points"/>
+            <TextBlock Style="{StaticResource datenBeschriftungStyle}" Grid.Row="7" Text="Vermerk"/>
+            <TextBlock Style="{StaticResource datenBeschriftungStyle}" Grid.Row="8" Text="Versuch" Padding="0,0,0,0"/>
+
+            <TextBlock Style="{StaticResource datenWerteStyle}" Grid.Row="1" Text="1112" />
+            <TextBlock Style="{StaticResource datenWerteStyle}" Grid.Row="2" Text="Wintersemester 16/17" />
+            <TextBlock Style="{StaticResource datenWerteStyle}" Grid.Row="3" Text="01" />
+            <TextBlock Style="{StaticResource datenWerteStyle}" Grid.Row="4" Text="0,0" />
+            <TextBlock Style="{StaticResource datenWerteStyle}" Grid.Row="5" Text="bestanden" />
+            <TextBlock Style="{StaticResource datenWerteStyle}" Grid.Row="6" Text="1,5" />
+            <TextBlock Style="{StaticResource datenWerteStyle}" Grid.Row="7" Text="ME" />
+            <TextBlock Style="{StaticResource datenWerteStyle}" Grid.Row="8" Text="1"/>
+
+            <Rectangle Style="{StaticResource datenRectStyle}" Grid.Row="0" />
+            --><!--<Rectangle Style="{StaticResource datenRectStyle}" Grid.Row="1" />
+            <Rectangle Style="{StaticResource datenRectStyle}" Grid.Row="2" />
+            <Rectangle Style="{StaticResource datenRectStyle}" Grid.Row="3" />
+            <Rectangle Style="{StaticResource datenRectStyle}" Grid.Row="4" />
+            <Rectangle Style="{StaticResource datenRectStyle}" Grid.Row="5" />
+            <Rectangle Style="{StaticResource datenRectStyle}" Grid.Row="6" />
+            <Rectangle Style="{StaticResource datenRectStyle}" Grid.Row="7" />
+            <Rectangle Style="{StaticResource datenRectStyle}" Grid.Row="8" />--><!--
+        </Grid>-->
+    </StackPanel>
+    
+</Page>

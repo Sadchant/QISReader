@@ -1,0 +1,17 @@
+﻿<Page
+    x:Class="QISReader.NotenSpiegelPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QISReader"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Frame x:Name="DatenFrame"/>
+        <TextBlock x:Name="KeinNotenSpiegelText" Text="Der Klassenspiegel wird aus Datenschutzgründen nicht angezeigt, da zu wenige Leistungen vorliegen." TextWrapping="Wrap" Margin="20" FontSize="20" Visibility="Visible"/>
+        <Frame x:Name="VerteilungsFrame"/>
+        <Frame x:Name="BestandenFrame"/>
+
+    </StackPanel>
+</Page>

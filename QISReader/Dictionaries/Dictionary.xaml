@@ -1,0 +1,24 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QISReader">
+
+    <SolidColorBrush x:Key="AccentBrush" Color="{ThemeResource SystemAccentColor}" />
+    <SolidColorBrush x:Key="NavigationForeground" Color="White" />
+
+    <SolidColorBrush x:Key="sehrgutBrush" Color="#00DA25" />
+    <SolidColorBrush x:Key="gutBrush" Color="#A5EC00" />
+    <SolidColorBrush x:Key="befriedigendBrush" Color="#FFE100" />
+    <SolidColorBrush x:Key="ausreichendBrush" Color="#FFA332" />
+    <SolidColorBrush x:Key="durchgefallenBrush" Color="#FF4732" />
+    <SolidColorBrush x:Key="bestandenBrush" Color="#599EFF" />
+
+    <SolidColorBrush x:Key="sehrgutDarkBrush" Color="#00BF1F" />
+    <SolidColorBrush x:Key="gutDarkBrush" Color="#85BF00" />
+    <SolidColorBrush x:Key="befriedigendDarkBrush" Color="#BFA500" />
+    <SolidColorBrush x:Key="ausreichendDarkBrush" Color="#BF6900" />
+    <SolidColorBrush x:Key="durchgefallenDarkBrush" Color="#BF1600" />
+    <SolidColorBrush x:Key="bestandenDarkBrush" Color="#004BBC" />
+
+
+</ResourceDictionary>

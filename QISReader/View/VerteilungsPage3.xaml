@@ -1,0 +1,74 @@
+﻿<Page
+    x:Class="QISReader.VerteilungsPage3"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QISReader"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Dictionaries/Dictionary.xaml" />
+                <ResourceDictionary Source="../Dictionaries/NotenSpiegelDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid Width="840" Background="White" HorizontalAlignment="Left">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+            <RowDefinition Height="150" />
+            <RowDefinition Height="150" />
+            <RowDefinition Height="100" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="120"/>
+            <ColumnDefinition Width="{StaticResource zwischenraumBreite}"/>
+            <ColumnDefinition Width="{StaticResource balkenBreite}"/>
+            <ColumnDefinition Width="{StaticResource zwischenraumBreite}"/>
+            <ColumnDefinition Width="{StaticResource balkenBreite}"/>
+            <ColumnDefinition Width="{StaticResource zwischenraumBreite}"/>
+            <ColumnDefinition Width="{StaticResource balkenBreite}"/>
+            <ColumnDefinition Width="{StaticResource zwischenraumBreite}"/>
+            <ColumnDefinition Width="{StaticResource balkenBreite}"/>
+            <ColumnDefinition Width="{StaticResource zwischenraumBreite}"/>
+            <ColumnDefinition Width="{StaticResource balkenBreite}"/>
+            <ColumnDefinition Width="{StaticResource zwischenraumBreite}"/>
+        </Grid.ColumnDefinitions>
+
+        <Rectangle Grid.Row="1" Style="{StaticResource hintergrundLinienStyle}" />
+        <Rectangle Grid.Row="2" Style="{StaticResource hintergrundLinienStyle}" />
+        <Rectangle Grid.Row="3" Style="{StaticResource hintergrundLinienStyle}" />
+
+        <TextBlock Style="{StaticResource hintergrundSchriftStyle}" Grid.Row="0" Text="10" Margin="0,-50,10,0" />
+        <TextBlock Style="{StaticResource hintergrundSchriftStyle}" Grid.Row="1" Text="5" Margin="0,0,10,0"/>
+        <TextBlock Style="{StaticResource hintergrundSchriftStyle}" Grid.Row="2" Text="0" Margin="0,50,10,0"/>
+
+        <Rectangle Style="{StaticResource dreierBalkenStyle}" Grid.Column="2" Fill="{StaticResource sehrgutBrush}" Height="167" />
+        <Rectangle Style="{StaticResource dreierBalkenStyle}" Grid.Column="4" Fill="{StaticResource gutBrush}" Height="290" />
+        <Rectangle Style="{StaticResource dreierBalkenStyle}" Grid.Column="6" Fill="{StaticResource befriedigendBrush}" Height="250" />
+        <Rectangle Style="{StaticResource dreierBalkenStyle}" Grid.Column="8" Fill="{StaticResource ausreichendBrush}" Height="200" />
+        <Rectangle Style="{StaticResource dreierBalkenStyle}" Grid.Column="10" Fill="{StaticResource durchgefallenBrush}" Height="100" />
+
+        <TextBlock Style="{StaticResource dreierNotenBeschriftungStyle}" Grid.Column="2" Foreground="{StaticResource sehrgutDarkBrush}" Text="1,0 - 1,3" />
+        <TextBlock Style="{StaticResource dreierNotenBeschriftungStyle}" Grid.Column="4" Foreground="{StaticResource gutDarkBrush}" Text="1,7 - 2,3" />
+        <TextBlock Style="{StaticResource dreierNotenBeschriftungStyle}" Grid.Column="6" Foreground="{StaticResource befriedigendDarkBrush}" Text="2,7 - 3,3" />
+        <TextBlock Style="{StaticResource dreierNotenBeschriftungStyle}" Grid.Column="8" Foreground="{StaticResource ausreichendDarkBrush}" Text="3,7 - 4,0" />
+        <TextBlock Style="{StaticResource dreierNotenBeschriftungStyle}" Grid.Column="10" Foreground="{StaticResource durchgefallenDarkBrush}" Text="4,7 - 5,0" />
+
+        <Border Style="{StaticResource dreierPlatzierterTextBorderStyle}" Grid.Column="1" Margin="0,210,0,0">
+            <TextBlock Text="Deine Note: 1,3" Foreground="{StaticResource sehrgutBrush}" FontStyle="Italic" Padding="7,0,7,0"/>
+        </Border>
+        <Border Style="{StaticResource viererPlatzierterTextBorderStyle}" Grid.Column="3" Margin="0,87,0,0" Grid.RowSpan="3">
+            <TextBlock  Text="Durchschnitt: 2,3" Foreground="{StaticResource gutBrush}" FontWeight="Bold" Padding="7,0,7,0"/>
+        </Border>
+
+        <TextBlock Style="{StaticResource dreierAnzahlTextStyle}" Grid.Column="2" Text="6" Margin="0,240,0,0" />
+        <TextBlock Style="{StaticResource dreierAnzahlTextStyle}" Grid.Column="4" Text="9" Margin="0,120,0,0" />
+        <TextBlock Style="{StaticResource dreierAnzahlTextStyle}" Grid.Column="6" Text="8" Margin="0,160,0,0" />
+        <TextBlock Style="{StaticResource dreierAnzahlTextStyle}" Grid.Column="8" Text="7" Margin="0,210,0,0" />
+        <TextBlock Style="{StaticResource dreierAnzahlTextStyle}" Grid.Column="10" Text="3" Margin="0,310,0,0" />
+    </Grid>
+</Page>
