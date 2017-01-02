@@ -38,27 +38,6 @@ namespace QISReader.View
             };
 
             globalNotenParser = App.LogicManager.NotenParser;
-            generateTable();
-        }
-
-        private void generateTable()
-        {
-            DatenÜberschriftTextBlock.Text = globalNotenParser.AktNotenSpiegel.AktÜberschrift;
-            int aktIndex = 0;
-            var r = App.Current.Resources;
-            var t = this.Resources;
-            var d = (Style)Resources["datenRectStyle"];
-            //foreach (string datenBeschriftung in globalNotenParser.AktNotenSpiegel.AktDatenBeschriftung)
-            //{
-            //    DatenTabelleGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            //    Rectangle line = new Rectangle { Style = (Style)Resources["datenRectStyle"] };
-            //    DatenTabelleGrid.Children.Add(line);
-            //    Grid.SetRow(line, aktIndex+1); //+1, weil in der ersten Reihe defaultmäßig das erste Rect sitzt
-
-            //    string datenInhalt = globalNotenParser.AktNotenSpiegel.AktDatenInhalt[aktIndex];
-
-            //    aktIndex++;
-            //}
         }
     }
 }

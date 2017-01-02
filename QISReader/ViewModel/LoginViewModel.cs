@@ -18,6 +18,8 @@ namespace QISReader.ViewModel
         private string _passwort;
         private string _infotext;
 
+        private bool loggingIn = false; //wird auf true gesetzt, wenn man sich anfängt einzuloggen, damit man es währenddessen nicht wiederholen kann
+
         public delegate void EventMethod();
         public event EventMethod StartAnmeldungEvent;
         public event EventMethod WrongLoginEvent;
@@ -137,6 +139,12 @@ namespace QISReader.ViewModel
 
         private async void Login()
         {
+            // wenn man sich am einloggen ist, blocke weitere Login-Versuche
+            if (loggingIn)
+                return;
+            // war man noch nicht eingeloggt, merke, dass man sich jetzt am einloggen ist
+            loggingIn = true;
+
             globalScraper.Username = _nutzername;
             globalScraper.Password = _passwort;
             globalScraper.Baseurl = "https://qis.hs-rm.de/qisserver/rds?state=";
@@ -160,6 +168,8 @@ namespace QISReader.ViewModel
                     KeineVerbindungEvent();
                 else
                     LoginFehlerEvent();
+                // Fehler, also ist man sich nicht mehr am einloggen
+                loggingIn = false;
                 return;
             }
 
@@ -176,6 +186,8 @@ namespace QISReader.ViewModel
                     KeineVerbindungEvent();
                 else //ansonsten ist es eine ScrapQISException oder eine normale Exception
                     NotenNavigationsFehlerEvent();
+                // Fehler, also ist man sich nicht mehr am einloggen
+                loggingIn = false;
                 return;
             }
 
@@ -189,6 +201,8 @@ namespace QISReader.ViewModel
             catch (Exception) // hier sollte eigentlich nichts schief gehen, wenn doch ist mein htmlParser fehlerhaft!
             {
                 NotenVerarbeitungFehlerEvent();
+                // Fehler, also ist man sich nicht mehr am einloggen
+                loggingIn = false;
                 return;
             }
             NotenVerarbeitungFertigEvent();

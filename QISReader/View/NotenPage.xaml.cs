@@ -41,7 +41,6 @@ namespace QISReader
 
         public NotenPage()
         {
-            Debug.WriteLine("KONSTRUKTOR NotenPage");
             this.InitializeComponent();
             //testMethode();
 

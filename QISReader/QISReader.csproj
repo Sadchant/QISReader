@@ -103,14 +103,8 @@
     <Compile Include="View\DatenPage.xaml.cs">
       <DependentUpon>DatenPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\DatenUC.xaml.cs">
-      <DependentUpon>DatenUC.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\FachManager.cs" />
     <Compile Include="Model\FileReader.cs" />
@@ -176,17 +170,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\DatenUC.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\LoginPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\MainPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\NavigationPage.xaml">
       <SubType>Designer</SubType>

@@ -188,7 +188,7 @@
                 <Button Grid.Row="17" Content="Notenspiegel" Grid.Column="9" Padding="0"/>-->
                 </Grid>
             </ScrollViewer>
-            <Frame Name="NotenSpiegelFrame" Grid.Column="1" Background="LightPink"/>
+            <Frame Name="NotenSpiegelFrame" Grid.Column="1" Background="White"/>
             <!--<Button Name="InfoButton" Grid.Column="1" Content="Auflösungsinfo updaten" VerticalAlignment="Top" Margin="10" Click="InfoButton_Click"/>
             <TextBlock Grid.Column="1" Name="BoundsText" Text="bounds" VerticalAlignment="Top" Margin="10,50,10,10"/>
             <TextBlock Grid.Column="1" Name="ScaleFactorText" Text="scalefactor" VerticalAlignment="Top" Margin="10,100,10,10"/>

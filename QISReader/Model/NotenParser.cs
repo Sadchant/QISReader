@@ -16,6 +16,8 @@ namespace QISReader.Model
         public List<int> AktVerteilung { get; set; }
         public float AktDurchschnitt { get; set; }
 
+        public float AktEigeneNote { get; set; } // hier etwas Fehl am Platz, aber sonst keinen besseren Platz gefunden
+
 
         public NotenSpiegel()
         {
@@ -51,7 +53,6 @@ namespace QISReader.Model
         // parsed die Noten in eine String-Liste
         public List<string> parseNoten(string htmlPage)
         {
-            Debug.WriteLine("parseNoten");
             string table = getSubStringBetween(htmlPage, @"<table border=""0"">", "</table>");
 
             table = Regex.Replace(table, @"\t|\n|\r", ""); // Aller Whitespace muss entfernt werden, sonst kann das HTML später schlecht geparsed werden
@@ -108,7 +109,6 @@ namespace QISReader.Model
                     {
                         Regex regex = new Regex(@"<a href=""(.*)""><img"); // das Pattern, wo der Link zum Notenspiegel liegt
                         Match htmlMatch = regex.Match(aktTd);
-                        Debug.WriteLine(aktCleanedTdList.First());
                         int fachnummer = Int32.Parse(aktCleanedTdList.First()); // das erste element hat niemals einen link und wurde bereits hinzugefügt
                         LinkDict.Add(fachnummer, htmlMatch.Groups[1].Value);
                         match = new Regex(@">(.*)<a").Match(aktTd);
@@ -233,6 +233,7 @@ namespace QISReader.Model
                 }
             }
             extractÜberschrift();
+            findEigeneNote();
         }
 
         // filtert aus den beiden Listen den Fachnamen heraus, speichert ihn in der Überschrift-Property und löscht ihn aus der Beschriftungs- und Daten-Liste
@@ -243,6 +244,13 @@ namespace QISReader.Model
             AktNotenSpiegel.AktÜberschrift = AktNotenSpiegel.AktDatenInhalt[überschriftIndex];
             AktNotenSpiegel.AktDatenBeschriftung.RemoveAt(überschriftIndex);
             AktNotenSpiegel.AktDatenInhalt.RemoveAt(überschriftIndex);
+        }
+
+        private void findEigeneNote()
+        {
+            AktNotenSpiegel.AktEigeneNote = 0;
+            int noteIndex = AktNotenSpiegel.AktDatenBeschriftung.IndexOf("Note");
+            AktNotenSpiegel.AktEigeneNote = float.Parse(AktNotenSpiegel.AktDatenInhalt[noteIndex]);
         }
 
         // sucht den Durchschnitt aus der html-Seite heraus und

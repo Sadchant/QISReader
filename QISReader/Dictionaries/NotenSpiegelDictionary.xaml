@@ -6,14 +6,14 @@
     <!--Resourcen für Daten-Tabelle-->
 
     <Style TargetType="TextBlock" x:Key="datenBeschriftungStyle">
-        <Setter Property="Grid.Column" Value="1" />
+        <Setter Property="Grid.Column" Value="0" />
         <Setter Property="Margin" Value="0,0,0,4" />
         <Setter Property="FontSize" Value="20" />
         <Setter Property="FontWeight" Value="Bold" />
     </Style>
 
     <Style TargetType="TextBlock" x:Key="datenWerteStyle">
-        <Setter Property="Grid.Column" Value="3" />
+        <Setter Property="Grid.Column" Value="2" />
         <Setter Property="Margin" Value="0,0,0,4" />
         <Setter Property="FontSize" Value="20" />
     </Style>
@@ -21,8 +21,8 @@
     <Style TargetType="Rectangle" x:Key="datenRectStyle">
         <Setter Property="Width" Value="350" />
         <Setter Property="Height" Value="1" />
-        <Setter Property="Grid.Column" Value="1" />
-        <Setter Property="Grid.ColumnSpan" Value="4" />
+        <Setter Property="Grid.Column" Value="0" />
+        <Setter Property="Grid.ColumnSpan" Value="3" />
         <Setter Property="VerticalAlignment" Value="Bottom" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="Fill" Value="Black" />
@@ -70,7 +70,7 @@
     </Style>
 
     <Style TargetType="TextBlock" x:Key="anzahlTextStyle">
-        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Grid.Row" Value="1" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="FontWeight" Value="Bold" />

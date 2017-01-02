@@ -7,11 +7,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Frame x:Name="DatenFrame"/>
-        <TextBlock x:Name="KeinNotenSpiegelText" Text="Der Klassenspiegel wird aus Datenschutzgründen nicht angezeigt, da zu wenige Leistungen vorliegen." TextWrapping="Wrap" Margin="20" FontSize="20" Visibility="Visible"/>
-        <Frame x:Name="VerteilungsFrame"/>
-        <Frame x:Name="BestandenFrame"/>
-
-    </StackPanel>
+    <ScrollViewer HorizontalScrollMode="Enabled" HorizontalScrollBarVisibility="Auto">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="1" Background="White">
+                <Frame x:Name="DatenFrame"/>
+                <TextBlock x:Name="KeinNotenSpiegelText" TextWrapping="Wrap" Margin="20" FontSize="20" Visibility="Collapsed"/>
+                <Frame x:Name="VerteilungsFrame"/>
+                <Frame x:Name="BestandenFrame"/>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+    
+    
 </Page>

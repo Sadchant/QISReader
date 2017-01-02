@@ -9,8 +9,8 @@ namespace QISReader.ViewModel
 {
     public class Zeile
     {
-        public string Beschriftung { get; set; }
-        public string Inhalt { get; set; }
+        public string Beschriftung { get; }
+        public string Inhalt { get; }
 
         public Zeile(string beschriftung, string inhalt)
         {
@@ -21,7 +21,8 @@ namespace QISReader.ViewModel
 
     public class DatenViewModel
     {
-        public List<Zeile> DatenList { get; set; }
+        public List<Zeile> DatenList { get; }
+        public string Überschrift { get; }
 
         private NotenParser globalNotenParser;
         //SPÄTER DATEN NICHT AUS DEM PARSER HOLEN SONDERN AUS DATEI
@@ -35,6 +36,7 @@ namespace QISReader.ViewModel
             {
                 DatenList.Add(new Zeile(aktNotenSpiegel.AktDatenBeschriftung[i], aktNotenSpiegel.AktDatenInhalt[i]));
             }
+            Überschrift = aktNotenSpiegel.AktÜberschrift;
         }
     }
 }
