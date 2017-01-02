@@ -76,6 +76,8 @@ namespace QISReader
                 VerteilungsFrame.Navigate(typeof(VerteilungsPage3), maxNotenSpiegelBeschriftungsNumber);
             else
                 VerteilungsFrame.Navigate(typeof(VerteilungsPage4), maxNotenSpiegelBeschriftungsNumber);
+
+            BestandenFrame.Navigate(typeof(BestandenPage));
         }
 
         //gibt true für VerteilungsPage3 und false für VerteilungsPage4 zurück
