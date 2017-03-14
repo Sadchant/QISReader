@@ -24,6 +24,16 @@ using Windows.UI.Xaml.Shapes;
 
 namespace QISReader
 {
+    public class NotenSpiegelNavigationArgs
+    {
+        public string HtmlPage { get; }
+        public bool NavigateToCollapsed { get; }
+        public NotenSpiegelNavigationArgs(string htmlPage, bool navigateToCollapsed)
+        {
+            HtmlPage = htmlPage;
+            NavigateToCollapsed = navigateToCollapsed;
+        }
+    }
     /// <summary>
     /// Eine leere Seite, die eigenständig verwendet oder zu der innerhalb eines Rahmens navigiert werden kann.
     /// </summary>
@@ -38,6 +48,8 @@ namespace QISReader
         bool isFirst = true;
         int aktRow = 1; // in aktRow kommt ein FachText rein, steht auf 1 weil auf dem 0ten die Überschrift "Notenübersicht" steht
         private Dictionary<int, string> linkDict;
+
+        private const int LEFTCOLUMNWIDTH = 750;
 
         public NotenPage()
         {
@@ -192,17 +204,20 @@ namespace QISReader
 
         private async void NotenSpiegelClick(object sender, RoutedEventArgs e)
         {
+            // rechte
+            RightColumn.Width = new GridLength(LEFTCOLUMNWIDTH);
             // wenn die NotenSpiegel-Seite für das Fach noch nicht da ist (wird in Dictionary gespeichert), navigiere dorthin
             // entscheide, welche NotenSpiegelPage genutzt wird
             int id = (int)((Button)sender).CommandParameter;
             string notenSpiegelHTMLPage = await App.LogicManager.Scraper.navigateToNotenSpiegel(App.LogicManager.NotenParser.LinkDict[id]);
             if (NotenSpiegelFrame.Visibility == Visibility.Collapsed)
             {
-                this.Frame.Navigate(typeof(NotenSpiegelPage), notenSpiegelHTMLPage);                
+                this.Frame.Navigate(typeof(NotenSpiegelPage), new NotenSpiegelNavigationArgs(notenSpiegelHTMLPage, true));                
             }
             else
             {
-                NotenSpiegelFrame.Navigate(typeof(NotenSpiegelPage), notenSpiegelHTMLPage);
+                Debug.WriteLine(Frame.BackStack.LastOrDefault() != null);
+                NotenSpiegelFrame.Navigate(typeof(NotenSpiegelPage), new NotenSpiegelNavigationArgs(notenSpiegelHTMLPage, Frame.BackStack.LastOrDefault() != null));
             }
         }
 
@@ -269,12 +284,8 @@ namespace QISReader
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (Frame.BackStack.LastOrDefault().SourcePageType.Equals(typeof(LoginPage)))
-            {
-                Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
-                return;
-            }
-            if (Frame.CanGoBack)
+            // die zweite 
+            if (Frame.CanGoBack && !Frame.SourcePageType.Equals(typeof(NotenPage)))
             {
                 // wird auf Mobile/im Tabletmode nicht beachtet
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Visible;

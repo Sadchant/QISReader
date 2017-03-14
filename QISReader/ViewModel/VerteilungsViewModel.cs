@@ -93,8 +93,6 @@ namespace QISReader.ViewModel
                 // Farbe und Position der Anzahl pro Note bestimmen:
                 float aktNotenAnzahlTopMargin = gridHeight - aktBalkenHeight + anzahlBeschriftungAbstandnachOben;
                 NotenAnzahlTextColors[i] = whiteBrush;
-                Debug.Write(aktNotenAnzahlTopMargin + anzahlBeschriftungHeight + anzahlBeschriftungAbstandnachOben);
-                Debug.WriteLine(" " + gridHeight);
                 if (aktNotenAnzahlTopMargin + anzahlBeschriftungHeight + anzahlBeschriftungAbstandnachOben > gridHeight)
                 {
                     aktNotenAnzahlTopMargin -= (anzahlBeschriftungAbstandnachOben*2 + anzahlBeschriftungHeight);

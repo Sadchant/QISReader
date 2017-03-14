@@ -54,6 +54,8 @@ namespace QISReader.Model
             {
                 throw new WrongLoginException();
             }
+            // Logindaten im DataSaver speichern speichern
+            App.LogicManager.LoginDataSaver.SetLoginData(Username, Password);
         }
 
         // navigiert bis zur Notenseite und gibt diese als String zurück

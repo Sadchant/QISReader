@@ -48,7 +48,8 @@
             <VisualStateGroup x:Name="VisualStateGroup">
                 <VisualState x:Name="VisualStateMin1680">
                     <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="1680"/>
+                        <!--<AdaptiveTrigger MinWindowWidth="1680"/>-->
+                        <AdaptiveTrigger MinWindowWidth="1590"/>
                     </VisualState.StateTriggers>
                 </VisualState>
                 <VisualState x:Name="VisualStateMin0">
@@ -82,7 +83,7 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" x:Name="RightColumn"/>
             </Grid.ColumnDefinitions>
             <ScrollViewer Name="NotenScrollViewer">
                 <Grid Name="NotenGrid">
@@ -132,6 +133,18 @@
                     <Rectangle Fill="Violet" Grid.Column="8"/>-->
 
                     <TextBlock Text="Notenübersicht" Grid.Column="1" FontSize="40" Margin="0,30,0,30" />
+
+                    <!--<ListView ItemsSource="{x:Bind fachList}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Rectangle Grid.Row="3" Fill="#5cd517" Grid.Column="0" Grid.ColumnSpan="10" Margin="0,0,0,0"/>
+                                <TextBlock Grid.Row="3" Text="Entwicklung interaktiver Benutzeroberflächen" Grid.Column="1" FontSize="20" Margin="20,0,0,0" FontWeight="Bold" TextWrapping="Wrap" MaxWidth="480" HorizontalAlignment="Left"/>
+                                <TextBlock Grid.Row="3" Text="1,8" Grid.Column="3" FontSize="20" Margin="0,0,0,0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                <TextBlock Grid.Row="3" Text="5,0 CP" Grid.Column="7" FontSize="20" Margin="0,0,0,0" FontWeight="Bold" HorizontalAlignment="Right"/>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        
+                    </ListView>-->
 
 
 

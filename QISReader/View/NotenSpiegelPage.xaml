@@ -12,6 +12,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="40" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="20" />
             </Grid.ColumnDefinitions>
             <StackPanel Grid.Column="1" Background="White">
                 <Frame x:Name="DatenFrame"/>

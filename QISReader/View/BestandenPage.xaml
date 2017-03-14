@@ -29,6 +29,7 @@
             <RowDefinition Height="40" />
             <RowDefinition Height="70" />
             <RowDefinition Height="40" />
+            <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
         <Rectangle Grid.Row="1" Fill="{StaticResource bestandenBrush}" />

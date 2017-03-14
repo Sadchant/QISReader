@@ -16,6 +16,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using QISReader.Model;
 using Windows.UI.Core;
+using QISReader.ViewModel;
+using QISReader.View;
 
 namespace QISReader
 {
@@ -25,6 +27,11 @@ namespace QISReader
     sealed partial class App : Application
     {
         public static LogicManager LogicManager;
+        public static NavigationManager NavigationManager { get; set; }
+        private LoginDataSaver dataSaver;
+        private Frame contentFrame;
+
+
         public event EventHandler<BackRequestedEventArgs> OnBackRequested;
         /// <summary>
         /// Initialisiert das Singletonanwendungsobjekt. Dies ist die erste Zeile von erstelltem Code
@@ -35,6 +42,8 @@ namespace QISReader
             this.InitializeComponent();
             this.Suspending += OnSuspending;
             LogicManager = new LogicManager();
+            dataSaver = LogicManager.LoginDataSaver;
+            NavigationManager = new NavigationManager();
         }
 
         /// <summary>
@@ -42,7 +51,7 @@ namespace QISReader
         /// werden z. B. verwendet, wenn die Anwendung gestartet wird, um eine bestimmte Datei zu öffnen.
         /// </summary>
         /// <param name="e">Details über Startanforderung und -prozess.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
 //#if DEBUG
 //            if (System.Diagnostics.Debugger.IsAttached)
@@ -77,8 +86,15 @@ namespace QISReader
                     // Wenn der Navigationsstapel nicht wiederhergestellt wird, zur ersten Seite navigieren
                     // und die neue Seite konfigurieren, indem die erforderlichen Informationen als Navigationsparameter
                     // übergeben werden
-                    rootFrame.Navigate(typeof(LoginPage), e.Arguments);
-                    //rootFrame.Navigate(typeof(NotenPage), e.Arguments);
+                    LoginData loginData = dataSaver.GetLoginData();
+                    if (loginData == null)
+                        rootFrame.Navigate(typeof(LoginPage), e.Arguments);
+                    else
+                    {
+                        LogicManager.FachManager.FachListe = await LogicManager.NotenDataSaver.LoadNoten();
+                        rootFrame.Navigate(typeof(NavigationPage), e.Arguments);
+                    }
+                        
                 }
                 // Sicherstellen, dass das aktuelle Fenster aktiv ist
                 Window.Current.Activate();
@@ -111,26 +127,14 @@ namespace QISReader
             deferral.Complete();
         }
 
+       
+
         // kümmert sich um die Rücknavigation via "Hardware"-Buttons oder eingeblendetem Desktop-Zurück-Button
         private void App_BackRequested(object sender, BackRequestedEventArgs e)
         {
             if (OnBackRequested != null) { OnBackRequested(this, e); }
 
-            // überprüfe ob sich noch niemand drum gekümmert hat
-            if (!e.Handled)
-            {
-                // navigier defaultmäßig im Frame zurück
-                Frame frame = Window.Current.Content as Frame;
-                if (frame.CanGoBack)
-                {
-                    // Navigation zurück zur Login-Page ist nicht erlaubt, dafür ist die Logout-Funktion da!
-                    if (!frame.BackStack.LastOrDefault().SourcePageType.Equals(typeof(LoginPage)))
-                        frame.GoBack();
-              
-                    // setzte Handled auf true, damit das System nicht in die letzte App navigiert
-                    e.Handled = true;
-                }
-            }
+            NavigationManager.ManageBackRequest(e);
         }
     }
 }

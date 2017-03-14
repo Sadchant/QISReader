@@ -94,12 +94,14 @@ namespace QISReader
                 return ermittlePage(ceiled*5 + 5);
         }
 
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            string htmlPage = e.Parameter as string;
+            NotenSpiegelNavigationArgs notenSpiegelNavigationArgs = e.Parameter as NotenSpiegelNavigationArgs;
+            string htmlPage = notenSpiegelNavigationArgs.HtmlPage;
             navigateToDatenPage(htmlPage);
             navigateToVerteilungsPage(htmlPage);
-            if (Frame.CanGoBack)
+            if (notenSpiegelNavigationArgs.NavigateToCollapsed)
             {
                 // wird auf Mobile/im Tabletmode nicht beachtet
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Visible;

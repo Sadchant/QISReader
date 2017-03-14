@@ -13,6 +13,7 @@ using Windows.Storage;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 
+// alte Experimentier-Klasse
 namespace QISReader.Model
 {
 

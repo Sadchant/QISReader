@@ -1,4 +1,5 @@
 ﻿using QISReader.Model;
+using QISReader.View;
 using QISReader.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -269,7 +270,7 @@ namespace QISReader
         private void HandleNotenVerarbeitungFertig()
         {
             LoginProgressRing.Visibility = Visibility.Collapsed;
-            this.Frame.Navigate(typeof(NotenPage));
+            this.Frame.Navigate(typeof(NavigationPage));
         }
 
         private void RelativePanel_KeyDown(object sender, KeyRoutedEventArgs e)

@@ -63,13 +63,6 @@ namespace QISReader.ViewModel
             return result;
         }
 
-        public LoginViewModel()
-        {
-            globalScraper = App.LogicManager.Scraper;
-            globalNotenParser = App.LogicManager.NotenParser;
-            globalFachManager = App.LogicManager.FachManager;
-        }
-
         public async void loadContent()
         {
             addHochschulen();
@@ -144,6 +137,11 @@ namespace QISReader.ViewModel
                 return;
             // war man noch nicht eingeloggt, merke, dass man sich jetzt am einloggen ist
             loggingIn = true;
+
+            // Hole aktuelle Logik-Objekte
+            globalScraper = App.LogicManager.Scraper;
+            globalNotenParser = App.LogicManager.NotenParser;
+            globalFachManager = App.LogicManager.FachManager;
 
             globalScraper.Username = _nutzername;
             globalScraper.Password = _passwort;

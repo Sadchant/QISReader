@@ -95,10 +95,13 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\LoginDataSaver.cs" />
+    <Compile Include="Model\NotenDataSaver.cs" />
     <Compile Include="ViewModel\BestandenViewModel.cs" />
     <Compile Include="ViewModel\DatenViewModel.cs" />
     <Compile Include="ViewModel\DelegateCommand.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
+    <Compile Include="ViewModel\NavigationManager.cs" />
     <Compile Include="ViewModel\VerteilungsViewModel.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="View\BestandenPage.xaml.cs">
@@ -106,6 +109,9 @@
     </Compile>
     <Compile Include="View\DatenPage.xaml.cs">
       <DependentUpon>DatenPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\EinstellungenPage.xaml.cs">
+      <DependentUpon>EinstellungenPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
@@ -116,6 +122,9 @@
     <Compile Include="Model\Scraper.cs" />
     <Compile Include="Model\Scraper2.cs" />
     <Compile Include="Model\LogicManager.cs" />
+    <Compile Include="View\FlexibleNavigationPage.xaml.cs">
+      <DependentUpon>FlexibleNavigationPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\NavigationPage.xaml.cs">
       <DependentUpon>NavigationPage.xaml</DependentUpon>
     </Compile>
@@ -126,6 +135,9 @@
       <DependentUpon>NotenSpiegelPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="View\StatistikenPage.xaml.cs">
+      <DependentUpon>StatistikenPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\VerteilungsPage3.xaml.cs">
       <DependentUpon>VerteilungsPage3.xaml</DependentUpon>
     </Compile>
@@ -178,7 +190,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\EinstellungenPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\LoginPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\FlexibleNavigationPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -204,6 +224,10 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
+    </Page>
+    <Page Include="View\StatistikenPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\VerteilungsPage3.xaml">
       <SubType>Designer</SubType>
