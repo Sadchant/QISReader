@@ -270,7 +270,7 @@ namespace QISReader
         private void HandleNotenVerarbeitungFertig()
         {
             LoginProgressRing.Visibility = Visibility.Collapsed;
-            this.Frame.Navigate(typeof(NavigationPage));
+            this.Frame.Navigate(typeof(NavigationPage), false); // Noten sind schon geladen und müssen nicht aus dem jsonFile wiederhergestellt werden, also false mitgeben
         }
 
         private void RelativePanel_KeyDown(object sender, KeyRoutedEventArgs e)

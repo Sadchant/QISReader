@@ -1,4 +1,5 @@
 ﻿using QISReader.Model;
+using QisReaderClassLibrary;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -69,155 +70,35 @@ namespace QISReader
             notenFarbenDict.Add(4.0f, (SolidColorBrush)Resources["ausreichendBrush"]);
             notenFarbenDict.Add(5.0f, (SolidColorBrush)Resources["durchgefallenBrush"]);
 
-            linkDict = App.LogicManager.NotenParser.LinkDict;
-            List<Fach> fachList = App.LogicManager.FachManager.FachListe;
-            // wenn nichts drin war ist was schief gelaufen, sollte nicht vorkommen!
-            if (fachList.Count == 0)
-            {
-                Debug.WriteLine("Achtung! FachListe ist leer!");
-                return;
-            }
-            int i = 0; // nur für die Anzeige der Versuche da
-            bool[] notenToShow = App.LogicManager.FachManager.getVersucheToShow(); // hole Liste um nur die Versuche anzuzeigen, die interessant sind
-            foreach (Fach aktFach in fachList)
-            {
-                if (aktFach is FachHeader)
-                {
-                    aktFachHeader = (FachHeader)aktFach;
-                    aktSpaceAbove = spaceAboveFachHeader;
-
-                    // das Rect für die Hintergrundfarbe
-                    // zuerst Farbe festlegen
-                    SolidColorBrush backgroundColor;
-                    if (aktFachHeader.Vorhanden[2] && aktFachHeader.Note > 0) // Note
-                    {
-                        backgroundColor = getColorFromNote(aktFachHeader.Note);
-                    }
-                    else if (aktFachHeader.Vorhanden[3])
-                    {
-                        if (aktFachHeader.Bestanden)
-                            backgroundColor = notenFarbenDict[0.0f]; // 0.0 ist der Key für das bestanden-Blau
-                        else
-                            backgroundColor = notenFarbenDict[5.0f]; // wenn nicht bestanden nutze das 5.0-Rot
-                    }
-                    else
-                        backgroundColor = new SolidColorBrush(Colors.LightGray);
-                    Rectangle testRect = new Rectangle { Fill = backgroundColor };
-                    addToNotenGrid(testRect, aktRow, 0);
-                    Grid.SetColumnSpan(testRect, 11);
-
-                    if (aktFachHeader.Vorhanden[1]) // Fachname
-                    {
-                        TextBlock fachText = new TextBlock { Text = aktFachHeader.FachName, FontSize = 20, /*Margin = new Thickness(20, 0, 0, 0),*/ FontWeight = FontWeights.Bold, TextWrapping = TextWrapping.Wrap, MaxWidth = 480, HorizontalAlignment = HorizontalAlignment.Left };
-                        addToNotenGrid(fachText, aktRow, 1);
-                    }
-                    if (aktFachHeader.Vorhanden[2]) // Note
-                    {
-                        TextBlock notenText = new TextBlock { Text = aktFachHeader.Note.ToString("0.0"), FontSize = 20, FontWeight = FontWeights.Bold, HorizontalAlignment = HorizontalAlignment.Right };
-                        addToNotenGrid(notenText, aktRow, 3);
-                    }
-                    if (aktFachHeader.Vorhanden[4]) // Cp
-                    {
-                        TextBlock cpText = new TextBlock { Text = aktFachHeader.Cp.ToString("0.0") + " CP", FontSize = 20, FontWeight = FontWeights.Bold, HorizontalAlignment = HorizontalAlignment.Right };
-                        addToNotenGrid(cpText, aktRow, 7);
-                    }
-                }
-                else
-                {
-                    aktFachInhalt = (FachInhalt)aktFach;
-                    aktSpaceAbove = spaceAboveFachInhalt;
-
-
-                    // das Rect für die Hintergrundfarbe
-                    // zuerst Farbe festlegen
-                    SolidColorBrush backgroundColor;
-                    if (aktFachInhalt.Vorhanden[3] && aktFachInhalt.Note > 0) // Note
-                    {
-                        backgroundColor = getColorFromNote(aktFachInhalt.Note);
-                    }
-                    else if (aktFachInhalt.Vorhanden[4])
-                    {
-                        if (aktFachInhalt.Bestanden)
-                            backgroundColor = notenFarbenDict[0.0f]; // 0.0 ist der Key für das bestanden-Blau
-                        else
-                            backgroundColor = notenFarbenDict[5.0f]; // wenn nicht bestanden nutze das 5.0-Rot
-                    }
-                    else
-                        backgroundColor = new SolidColorBrush(Colors.LightGray);
-
-
-                    Rectangle testRect = new Rectangle { Fill = backgroundColor };
-                    addToNotenGrid(testRect, aktRow, 0);
-                    Grid.SetColumnSpan(testRect, 11);
-
-                    if (aktFachInhalt.Vorhanden[1]) // Fachname
-                    {
-                        TextBlock fachText = new TextBlock { Text = aktFachInhalt.FachName, FontSize = 18, /*Margin = new Thickness(40, 0, 0, 0),*/ TextWrapping = TextWrapping.Wrap, MaxWidth = 480, /*FontStyle = FontStyle.Italic*/ };
-                        addToNotenGrid(fachText, aktRow, 1);
-                    }
-                    if (aktFachInhalt.Vorhanden[3]) // Note
-                    {
-                        TextBlock notenText = new TextBlock { Text = aktFachInhalt.Note.ToString("0.0"), FontSize = 18, HorizontalAlignment = HorizontalAlignment.Right, /*FontStyle = FontStyle.Italic*/ };
-                        addToNotenGrid(notenText, aktRow, 3);
-                    }
-                    if (aktFachInhalt.Vorhanden[6]) // Versuch
-                    {
-                        if (notenToShow[i]) // die trues im bool-Array notenToShow wurden durch getNotenToShow() an den gewünschten Stellen auf true gesetzt
-                        {
-                            TextBlock versuchText = new TextBlock { Text = "Versuch " + aktFachInhalt.Versuch.ToString(), FontSize = 18, HorizontalAlignment = HorizontalAlignment.Right, /*FontStyle = FontStyle.Italic*/ };
-                            addToNotenGrid(versuchText, aktRow, 5);
-                        }                        
-                        
-                    }
-                    if (aktFachInhalt.Vorhanden[5]) // Cp
-                    {
-                        TextBlock cpText = new TextBlock { Text = aktFachInhalt.Cp.ToString("0.0") + " Cp", FontSize = 18, HorizontalAlignment = HorizontalAlignment.Right, /*FontStyle = FontStyle.Italic*/ };
-                        addToNotenGrid(cpText, aktRow, 7);
-                    }
-                    if (linkDict.ContainsKey(aktFachInhalt.Id))
-                    {
-                        Button notenSpiegelButton = new Button { Content = "Notenspiegel", Padding = new Thickness(0), Margin = new Thickness(0,0,15,0), CommandParameter=aktFachInhalt.Id };
-                        notenSpiegelButton.Click += NotenSpiegelClick;
-                        addToNotenGrid(notenSpiegelButton, aktRow, 9);
-                    }
-                    //NotenGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                }
-                aktRow += 2;
-                // wenns nicht der erste ist, mache eine Leerzeile
-                if (isFirst)
-                {                    
-                    isFirst = false;
-                }
-                else
-                {
-                    NotenGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(aktSpaceAbove) });
-                }
-                NotenGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-                i++;
-            }
-
-            //NotenGrid.RowDefinitions.Add(new RowDefinition { Height=GridLength.Auto });
-            //Rectangle aktRect = new Rectangle { Width = 1000, Height=100, Fill=new SolidColorBrush(Colors.Red) } ;
-            //NotenGrid.Children.Add(aktRect);
-            //Grid.SetRow(aktRect, 1);
+            Debug.WriteLine("generate Noten");
+            generateNotenXaml();
+            Debug.WriteLine("Noten generated");
         }
 
         private async void NotenSpiegelClick(object sender, RoutedEventArgs e)
         {
-            // rechte
-            RightColumn.Width = new GridLength(LEFTCOLUMNWIDTH);
-            // wenn die NotenSpiegel-Seite für das Fach noch nicht da ist (wird in Dictionary gespeichert), navigiere dorthin
-            // entscheide, welche NotenSpiegelPage genutzt wird
-            int id = (int)((Button)sender).CommandParameter;
-            string notenSpiegelHTMLPage = await App.LogicManager.Scraper.navigateToNotenSpiegel(App.LogicManager.NotenParser.LinkDict[id]);
-            if (NotenSpiegelFrame.Visibility == Visibility.Collapsed)
+            //// rechte
+            //RightColumn.Width = new GridLength(LEFTCOLUMNWIDTH);
+            //// wenn die NotenSpiegel-Seite für das Fach noch nicht da ist (wird in Dictionary gespeichert), navigiere dorthin
+            //// entscheide, welche NotenSpiegelPage genutzt wird
+            //int id = (int)((Button)sender).CommandParameter;
+            //string notenSpiegelHTMLPage = await App.LogicManager.Scraper.navigateToNotenSpiegel(App.LogicManager.NotenParser.LinkDict[id]);
+            //if (NotenSpiegelFrame.Visibility == Visibility.Collapsed)
+            //{
+            //    this.Frame.Navigate(typeof(NotenSpiegelPage), new NotenSpiegelNavigationArgs(notenSpiegelHTMLPage, true));                
+            //}
+            //else
+            //{
+            //    Debug.WriteLine(Frame.BackStack.LastOrDefault() != null);
+            //    NotenSpiegelFrame.Navigate(typeof(NotenSpiegelPage), new NotenSpiegelNavigationArgs(notenSpiegelHTMLPage, Frame.BackStack.LastOrDefault() != null));
+            //}
+            int i = 0;
+            foreach(var blubb in App.LogicManager.NotenParser.LinkDict.Keys)
             {
-                this.Frame.Navigate(typeof(NotenSpiegelPage), new NotenSpiegelNavigationArgs(notenSpiegelHTMLPage, true));                
-            }
-            else
-            {
-                Debug.WriteLine(Frame.BackStack.LastOrDefault() != null);
-                NotenSpiegelFrame.Navigate(typeof(NotenSpiegelPage), new NotenSpiegelNavigationArgs(notenSpiegelHTMLPage, Frame.BackStack.LastOrDefault() != null));
+                string notenSpiegelHTMLPage = await App.LogicManager.Scraper.navigateToNotenSpiegel(App.LogicManager.NotenParser.LinkDict[blubb]);
+                App.LogicManager.NotenParser.parseNotenDaten(notenSpiegelHTMLPage);
+                try { App.LogicManager.NotenParser.parseNotenSpiegel(notenSpiegelHTMLPage); } catch { }
+                Debug.WriteLine(i++);
             }
         }
 
@@ -318,6 +199,141 @@ namespace QISReader
 
             string notenSpiegelPage = await FileReader.readNotenSpiegelPage();
             App.LogicManager.NotenParser.parseNotenSpiegel(notenSpiegelPage);
+        }
+
+        private void generateNotenXaml()
+        {
+            linkDict = App.LogicManager.NotenParser.LinkDict;
+            List<Fach> fachList = App.LogicManager.FachManager.FachListe;
+            // wenn nichts drin war ist was schief gelaufen, sollte nicht vorkommen!
+            if (fachList.Count == 0)
+            {
+                Debug.WriteLine("Achtung! FachListe ist leer!");
+                return;
+            }
+            int i = 0; // nur für die Anzeige der Versuche da
+            bool[] notenToShow = App.LogicManager.FachManager.getVersucheToShow(); // hole Liste um nur die Versuche anzuzeigen, die interessant sind
+            foreach (Fach aktFach in fachList)
+            {
+                if (aktFach is FachHeader)
+                {
+                    aktFachHeader = (FachHeader)aktFach;
+                    aktSpaceAbove = spaceAboveFachHeader;
+
+                    // das Rect für die Hintergrundfarbe
+                    // zuerst Farbe festlegen
+                    SolidColorBrush backgroundColor;
+                    if (aktFachHeader.Vorhanden[2] && aktFachHeader.Note > 0) // Note
+                    {
+                        backgroundColor = getColorFromNote(aktFachHeader.Note);
+                    }
+                    else if (aktFachHeader.Vorhanden[3])
+                    {
+                        if (aktFachHeader.Bestanden)
+                            backgroundColor = notenFarbenDict[0.0f]; // 0.0 ist der Key für das bestanden-Blau
+                        else
+                            backgroundColor = notenFarbenDict[5.0f]; // wenn nicht bestanden nutze das 5.0-Rot
+                    }
+                    else
+                        backgroundColor = new SolidColorBrush(Colors.LightGray);
+                    Rectangle testRect = new Rectangle { Fill = backgroundColor };
+                    addToNotenGrid(testRect, aktRow, 0);
+                    Grid.SetColumnSpan(testRect, 11);
+
+                    if (aktFachHeader.Vorhanden[1]) // Fachname
+                    {
+                        TextBlock fachText = new TextBlock { Text = aktFachHeader.FachName, FontSize = 20, /*Margin = new Thickness(20, 0, 0, 0),*/ FontWeight = FontWeights.Bold, TextWrapping = TextWrapping.Wrap, MaxWidth = 480, HorizontalAlignment = HorizontalAlignment.Left };
+                        addToNotenGrid(fachText, aktRow, 1);
+                    }
+                    if (aktFachHeader.Vorhanden[2]) // Note
+                    {
+                        TextBlock notenText = new TextBlock { Text = aktFachHeader.Note.ToString("0.0"), FontSize = 20, FontWeight = FontWeights.Bold, HorizontalAlignment = HorizontalAlignment.Right };
+                        addToNotenGrid(notenText, aktRow, 3);
+                    }
+                    if (aktFachHeader.Vorhanden[4]) // Cp
+                    {
+                        TextBlock cpText = new TextBlock { Text = aktFachHeader.Cp.ToString("0.0") + " CP", FontSize = 20, FontWeight = FontWeights.Bold, HorizontalAlignment = HorizontalAlignment.Right };
+                        addToNotenGrid(cpText, aktRow, 7);
+                    }
+                }
+                else
+                {
+                    aktFachInhalt = (FachInhalt)aktFach;
+                    aktSpaceAbove = spaceAboveFachInhalt;
+
+
+                    // das Rect für die Hintergrundfarbe
+                    // zuerst Farbe festlegen
+                    SolidColorBrush backgroundColor;
+                    if (aktFachInhalt.Vorhanden[3] && aktFachInhalt.Note > 0) // Note
+                    {
+                        backgroundColor = getColorFromNote(aktFachInhalt.Note);
+                    }
+                    else if (aktFachInhalt.Vorhanden[4])
+                    {
+                        if (aktFachInhalt.Bestanden)
+                            backgroundColor = notenFarbenDict[0.0f]; // 0.0 ist der Key für das bestanden-Blau
+                        else
+                            backgroundColor = notenFarbenDict[5.0f]; // wenn nicht bestanden nutze das 5.0-Rot
+                    }
+                    else
+                        backgroundColor = new SolidColorBrush(Colors.LightGray);
+
+
+                    Rectangle testRect = new Rectangle { Fill = backgroundColor };
+                    addToNotenGrid(testRect, aktRow, 0);
+                    Grid.SetColumnSpan(testRect, 11);
+
+                    if (aktFachInhalt.Vorhanden[1]) // Fachname
+                    {
+                        TextBlock fachText = new TextBlock { Text = aktFachInhalt.FachName, FontSize = 18, /*Margin = new Thickness(40, 0, 0, 0),*/ TextWrapping = TextWrapping.Wrap, MaxWidth = 480, /*FontStyle = FontStyle.Italic*/ };
+                        addToNotenGrid(fachText, aktRow, 1);
+                    }
+                    if (aktFachInhalt.Vorhanden[3]) // Note
+                    {
+                        TextBlock notenText = new TextBlock { Text = aktFachInhalt.Note.ToString("0.0"), FontSize = 18, HorizontalAlignment = HorizontalAlignment.Right, /*FontStyle = FontStyle.Italic*/ };
+                        addToNotenGrid(notenText, aktRow, 3);
+                    }
+                    if (aktFachInhalt.Vorhanden[6]) // Versuch
+                    {
+                        if (notenToShow[i]) // die trues im bool-Array notenToShow wurden durch getNotenToShow() an den gewünschten Stellen auf true gesetzt
+                        {
+                            TextBlock versuchText = new TextBlock { Text = "Versuch " + aktFachInhalt.Versuch.ToString(), FontSize = 18, HorizontalAlignment = HorizontalAlignment.Right, /*FontStyle = FontStyle.Italic*/ };
+                            addToNotenGrid(versuchText, aktRow, 5);
+                        }
+
+                    }
+                    if (aktFachInhalt.Vorhanden[5]) // Cp
+                    {
+                        TextBlock cpText = new TextBlock { Text = aktFachInhalt.Cp.ToString("0.0") + " Cp", FontSize = 18, HorizontalAlignment = HorizontalAlignment.Right, /*FontStyle = FontStyle.Italic*/ };
+                        addToNotenGrid(cpText, aktRow, 7);
+                    }
+                    if (linkDict.ContainsKey(aktFachInhalt.Id))
+                    {
+                        Button notenSpiegelButton = new Button { Content = "Notenspiegel", Padding = new Thickness(0), Margin = new Thickness(0, 0, 15, 0), CommandParameter = aktFachInhalt.Id };
+                        notenSpiegelButton.Click += NotenSpiegelClick;
+                        addToNotenGrid(notenSpiegelButton, aktRow, 9);
+                    }
+                    //NotenGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                }
+                aktRow += 2;
+                // wenns nicht der erste ist, mache eine Leerzeile
+                if (isFirst)
+                {
+                    isFirst = false;
+                }
+                else
+                {
+                    NotenGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(aktSpaceAbove) });
+                }
+                NotenGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                i++;
+            }
+
+            //NotenGrid.RowDefinitions.Add(new RowDefinition { Height=GridLength.Auto });
+            //Rectangle aktRect = new Rectangle { Width = 1000, Height=100, Fill=new SolidColorBrush(Colors.Red) } ;
+            //NotenGrid.Children.Add(aktRect);
+            //Grid.SetRow(aktRect, 1);
         }
     }
 }

@@ -238,7 +238,16 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\QisReaderBackground\QisReaderBackground.csproj">
+      <Project>{54d3c475-8d47-4cb3-9575-a5716b5ad2b8}</Project>
+      <Name>QisReaderBackground</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QisReaderClassLibrary\QisReaderClassLibrary.csproj">
+      <Project>{a977c474-5ee5-4417-8373-fabad089a8ef}</Project>
+      <Name>QisReaderClassLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -28,10 +29,21 @@ namespace QISReader.View
             this.InitializeComponent();
             App.NavigationManager.InsertContentFrame(ContentFrame);
             App.NavigationManager.InsertListBoxes(TopListBox, BottomListBox);
-            NotenListBoxItem.IsSelected = true;
-            TopListBox.SelectedItem = NotenListBoxItem;
 
             EinstellungenPage.LogoutEvent += LogoutNavigation; 
+        }
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            // in den NavigationEventArgs wird mitgegeben, ob nach App-Start direkt zur NavigationPage navigiert wurde
+            // etwas umständlich, kann wieder in die app-behind wenns auf dem smartphone nichts bringt
+            Debug.WriteLine("Zur NavigationPage navigated");
+            if ((bool)e.Parameter)
+            {
+                App.LogicManager.FachManager.FachListe = await App.LogicManager.NotenDataSaver.LoadNoten();
+            }
+            NotenListBoxItem.IsSelected = true;
+            TopListBox.SelectedItem = NotenListBoxItem;
         }
 
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)

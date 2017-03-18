@@ -51,7 +51,7 @@ namespace QISReader
         /// werden z. B. verwendet, wenn die Anwendung gestartet wird, um eine bestimmte Datei zu öffnen.
         /// </summary>
         /// <param name="e">Details über Startanforderung und -prozess.</param>
-        protected override async void OnLaunched(LaunchActivatedEventArgs e)
+        protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
 //#if DEBUG
 //            if (System.Diagnostics.Debugger.IsAttached)
@@ -91,8 +91,7 @@ namespace QISReader
                         rootFrame.Navigate(typeof(LoginPage), e.Arguments);
                     else
                     {
-                        LogicManager.FachManager.FachListe = await LogicManager.NotenDataSaver.LoadNoten();
-                        rootFrame.Navigate(typeof(NavigationPage), e.Arguments);
+                        rootFrame.Navigate(typeof(NavigationPage), true);
                     }
                         
                 }

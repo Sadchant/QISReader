@@ -74,6 +74,8 @@
                 <ComboBoxItem Content="Studienfortschritt" IsSelected="True"/>
                 <ComboBoxItem Content="Studienordnung" />
             </ComboBox>
+            <ProgressRing Name="LoginProgressRing" Width="25" Height="25" IsActive="True" Foreground="{StaticResource AccentBrush}" RelativePanel.LeftOf="StatusTextBlock" Margin="10" Visibility="Visible"/>
+            <!--<ProgressBar Name="StatusProgressBar" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.LeftOf="StatusTextBlock" Foreground="{ StaticResource AccentBrush}" IsIndeterminate="True" Width="200" Background="Red" Margin="0,0,20,0"/>-->
             <TextBlock Name="StatusTextBlock" Text="Aktualisiere Noten..." Foreground="{ThemeResource SystemAccentColorDark1}" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" Margin="0,0,10,0" />
         </RelativePanel>
 
@@ -207,7 +209,7 @@
             <TextBlock Grid.Column="1" Name="ScaleFactorText" Text="scalefactor" VerticalAlignment="Top" Margin="10,100,10,10"/>
             <TextBlock Grid.Column="1" Name="SizeText" Text="size" VerticalAlignment="Top" Margin="10,150,10,10"/>-->
 
-            <!--<ProgressBar Name="StatusProgressBar" VerticalAlignment="Top" Foreground="{ StaticResource AccentBrush}" IsIndeterminate="True" Grid.Row="2" Grid.ColumnSpan="2"/>-->
+            
         </Grid>
     </Grid>
 </Page>

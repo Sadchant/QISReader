@@ -1,5 +1,6 @@
 ﻿using QISReader.Model;
 using QISReader.View;
+using QisReaderClassLibrary;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -26,7 +27,7 @@ namespace QISReader
     public sealed partial class NotenSpiegelPage : Page
     {
         private NotenParser globalNotenParser;
-        private Dictionary<string, NotenSpiegel> notenSpiegelDict;
+        private Dictionary<string, NotenDetails> notenSpiegelDict;
         private int maxNotenSpiegelBeschriftungsNumber;
 
 
@@ -34,7 +35,7 @@ namespace QISReader
         {
             this.InitializeComponent();
             globalNotenParser = App.LogicManager.NotenParser;
-            notenSpiegelDict = new Dictionary<string, NotenSpiegel>();            
+            notenSpiegelDict = new Dictionary<string, NotenDetails>();            
         }
 
         private async void navigateToDatenPage(string notenSpiegelhtmlPage)
@@ -72,7 +73,7 @@ namespace QISReader
                     KeinNotenSpiegelText.Text = "Fehler beim Laden des Notenspiegels";
                 return;
             }
-            if (ermittlePage(globalNotenParser.AktNotenSpiegel.AktVerteilung.Max()))
+            if (ermittlePage(globalNotenParser.AktNotenSpiegel.Verteilung.Max()))
                 VerteilungsFrame.Navigate(typeof(VerteilungsPage3), maxNotenSpiegelBeschriftungsNumber);
             else
                 VerteilungsFrame.Navigate(typeof(VerteilungsPage4), maxNotenSpiegelBeschriftungsNumber);

@@ -22,12 +22,12 @@ namespace QISReader.ViewModel
 
         public BestandenViewModel()
         {
-            var bestandenAnzahl = globalNotenParser.AktNotenSpiegel.AktVerteilung.Take(globalNotenParser.AktNotenSpiegel.AktVerteilung.Count - 1);
+            var bestandenAnzahl = globalNotenParser.AktNotenSpiegel.Verteilung.Take(globalNotenParser.AktNotenSpiegel.Verteilung.Count - 1);
             foreach(int notenAnzahl in bestandenAnzahl)
             {
                 bestandenCount += notenAnzahl;
             }
-            nichtBestandenCount = globalNotenParser.AktNotenSpiegel.AktVerteilung.Last();
+            nichtBestandenCount = globalNotenParser.AktNotenSpiegel.Verteilung.Last();
             teilnehmer = bestandenCount + nichtBestandenCount;
 
             float percentScaler = 100.0f / teilnehmer;

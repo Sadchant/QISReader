@@ -59,7 +59,7 @@ namespace QISReader.ViewModel
         private async Task<string> readInfoTextFile()
         {
             var notenFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Resources/InfoText.txt"));
-            string result = await Windows.Storage.FileIO.ReadTextAsync(notenFile);
+            string result = await FileIO.ReadTextAsync(notenFile);
             return result;
         }
 
@@ -132,6 +132,7 @@ namespace QISReader.ViewModel
 
         private async void Login()
         {
+            Debug.WriteLine("fange an mit login");
             // wenn man sich am einloggen ist, blocke weitere Login-Versuche
             if (loggingIn)
                 return;
@@ -151,7 +152,6 @@ namespace QISReader.ViewModel
             string htmlPage; // hier wird die vom Scrapen erzeugte HTML-Seite drin gespeichert
             List<string> notenStringList;
             StartAnmeldungEvent();
-            Debug.WriteLine("StartAnmeldungEvent");
             try
             {
                 //komischer Workaround, damit "Anmeldung..." angezeigt wird
@@ -170,10 +170,9 @@ namespace QISReader.ViewModel
                 loggingIn = false;
                 return;
             }
-
+            Debug.WriteLine("starte noten navigation");
             // ### zu Noten navigieren, Ergebnis ist String mit Noten-Html-Seite
             StartNotenNavigationEvent();
-            htmlPage = await globalScraper.NavigateQis();
             try
             {
                 htmlPage = await globalScraper.NavigateQis();
@@ -189,6 +188,7 @@ namespace QISReader.ViewModel
                 return;
             }
 
+            Debug.WriteLine("starte noten verarbeitung");
             // ### Noten verarbeiten, Ergebnis ist eine Liste mit Fach-Objekten
             StartNotenVerarbeitungEvent();
             try
@@ -204,6 +204,7 @@ namespace QISReader.ViewModel
                 return;
             }
             NotenVerarbeitungFertigEvent();
+            Debug.WriteLine("alles fertig");
         }
     }
 }

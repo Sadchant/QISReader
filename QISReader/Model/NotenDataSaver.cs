@@ -9,6 +9,7 @@ using System.IO;
 
 using System.Diagnostics;
 using Windows.Storage.Streams;
+using QisReaderClassLibrary;
 
 namespace QISReader.Model
 {

@@ -32,7 +32,8 @@ namespace QISReader.View
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (Frame.BackStack.LastOrDefault().SourcePageType.Equals(typeof(LoginPage)))
+            // Frame.BackStack.LastOrDefault() kann null sein wenn die app suspended wird
+            if (Frame.BackStack.LastOrDefault() == null || Frame.BackStack.LastOrDefault().SourcePageType.Equals(typeof(LoginPage)))
             {
                 Windows.UI.Core.SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = Windows.UI.Core.AppViewBackButtonVisibility.Collapsed;
                 return;

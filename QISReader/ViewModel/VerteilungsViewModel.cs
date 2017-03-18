@@ -84,12 +84,12 @@ namespace QISReader.ViewModel
             float scaler = gridHeight / maxBeschriftung;
             for(int i=0; i<NOTENANZAHL; i++)
             {
-                NotenAnzahlText[i] = globalNotenParser.AktNotenSpiegel.AktVerteilung[i];
-                float aktBalkenHeight = globalNotenParser.AktNotenSpiegel.AktVerteilung[i] * scaler;
+                NotenAnzahlText[i] = globalNotenParser.AktNotenSpiegel.Verteilung[i];
+                float aktBalkenHeight = globalNotenParser.AktNotenSpiegel.Verteilung[i] * scaler;
                 NotenBalkenHeights[i] = aktBalkenHeight;
 
                 // Text für Anzahl-Beschriftung setzen
-                NotenAnzahlText[i] = globalNotenParser.AktNotenSpiegel.AktVerteilung[i];
+                NotenAnzahlText[i] = globalNotenParser.AktNotenSpiegel.Verteilung[i];
                 // Farbe und Position der Anzahl pro Note bestimmen:
                 float aktNotenAnzahlTopMargin = gridHeight - aktBalkenHeight + anzahlBeschriftungAbstandnachOben;
                 NotenAnzahlTextColors[i] = whiteBrush;
