@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace QisReaderClassLibrary
 {
-    public class Globals
+    public class GlobalValues
     {
         public const string HOCHSCHULE = "hochschule";
 
@@ -22,5 +22,9 @@ namespace QisReaderClassLibrary
         public const int NOTENPROCESSINGERROR = 104;
 
         public const int NOTENSPIEGELPROGRESSSTART = 200;
+
+        public const string NOTENDATAFILENAME = "notendata.json";
+        public const string NOTENFILENAME = "noten.json";
+        public const string NOTENDETAILSFILENAME = "notendetails.json";
     }
 }

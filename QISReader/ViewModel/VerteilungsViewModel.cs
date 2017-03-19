@@ -106,7 +106,7 @@ namespace QISReader.ViewModel
         private void calculateDurchschnittData(float firstGridHeight, float gridHeight, ResourceDictionary resources, float anzahlBeschriftungAbstandnachOben, float anzahlBeschriftungHeight)
         {
             //zuerst die Platzierung des Durchschnitts berechnen
-            float durchschnitt = globalNotenParser.AktNotenSpiegel.AktDurchschnitt;
+            float durchschnitt = globalNotenParser.AktNotenSpiegel.Durchschnitt;
             DurchschnittText = "Durchschnitt: " + durchschnitt;
             float topmargin = firstGridHeight + gridHeight - (anzahlBeschriftungAbstandnachOben*2) - anzahlBeschriftungHeight;
             int index = 0;
@@ -149,7 +149,7 @@ namespace QISReader.ViewModel
         private void calculateEigeneNoteData(float firstGridHeight, float gridHeight, ResourceDictionary resources, float anzahlBeschriftungAbstandnachOben, float anzahlBeschriftungHeight)
         {
             //zuerst die Platzierung des Durchschnitts berechnen
-            float eigeneNote = globalNotenParser.AktNotenSpiegel.AktEigeneNote;
+            float eigeneNote = globalNotenParser.AktNotenSpiegel.EigeneNote;
             EigeneNoteText = "Deine Note: " + eigeneNote;
             float topmargin = firstGridHeight + gridHeight - (anzahlBeschriftungAbstandnachOben*2) - anzahlBeschriftungHeight;
             int index = 0;

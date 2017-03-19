@@ -108,7 +108,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fach.cs" />
-    <Compile Include="Globals.cs" />
+    <Compile Include="GlobalValues.cs" />
+    <Compile Include="JsonManager.cs" />
     <Compile Include="LoginDataSaver.cs" />
     <Compile Include="NotenData.cs" />
     <Compile Include="NotenDetails.cs" />

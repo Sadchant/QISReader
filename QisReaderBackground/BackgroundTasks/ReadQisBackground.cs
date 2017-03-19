@@ -17,11 +17,13 @@ namespace QisReaderBackground
         {
             _deferral = taskInstance.GetDeferral();
 
+            JsonManager jsonManager = new JsonManager();
+
             Scraper scraper = new Scraper();
             InitScraper(scraper);
             await scraper.Login();
 
-            taskInstance.Progress = Globals.START;
+            taskInstance.Progress = GlobalValues.START;
             try
             {
                 //vorerst ausgeschaltet: komischer Workaround, damit "Anmeldung..." angezeigt wird
@@ -31,14 +33,14 @@ namespace QisReaderBackground
             catch (Exception exception)
             {
                 if (exception is WrongLoginException)
-                    taskInstance.Progress = Globals.WRONGLOGIN;
+                    taskInstance.Progress = GlobalValues.WRONGLOGIN;
                 else if (exception is AggregateException)
-                    taskInstance.Progress = Globals.NOCONNECTION;
+                    taskInstance.Progress = GlobalValues.NOCONNECTION;
                 else
-                    taskInstance.Progress = Globals.LOGINERROR;
+                    taskInstance.Progress = GlobalValues.LOGINERROR;
                 return;
             }
-            taskInstance.Progress = Globals.EINGELOGGT;
+            taskInstance.Progress = GlobalValues.EINGELOGGT;
             Debug.WriteLine("starte noten navigation");
 
             // ### zu Noten navigieren, Ergebnis ist String mit Noten-Html-Seite
@@ -50,15 +52,15 @@ namespace QisReaderBackground
             catch (Exception exception)
             {
                 if (exception is AggregateException)
-                    taskInstance.Progress = Globals.NOCONNECTION;
+                    taskInstance.Progress = GlobalValues.NOCONNECTION;
                 else //ansonsten ist es eine ScrapQISException oder eine normale Exception
-                    taskInstance.Progress = Globals.NOTENNAVIGATIONERROR;
+                    taskInstance.Progress = GlobalValues.NOTENNAVIGATIONERROR;
                 return;
             }
 
             Debug.WriteLine("starte noten verarbeitung");
             // ### Noten verarbeiten, Ergebnis ist eine Liste mit Fach-Objekten
-            taskInstance.Progress = Globals.NAVIGIERT;
+            taskInstance.Progress = GlobalValues.NAVIGIERT;
             List<Fach> fachListe = new List<Fach>();
             HtmlParser htmlParser = new HtmlParser();
             try
@@ -67,10 +69,11 @@ namespace QisReaderBackground
             }
             catch (Exception) // hier sollte eigentlich nichts schief gehen, wenn doch ist mein htmlParser fehlerhaft!
             {
-                taskInstance.Progress = Globals.NOTENPROCESSINGERROR;
+                taskInstance.Progress = GlobalValues.NOTENPROCESSINGERROR;
                 return;
             }
-            taskInstance.Progress = Globals.VERARBEITET;
+            jsonManager.Save(htmlParser.FachListe, GlobalValues.NOTENFILENAME);
+            taskInstance.Progress = GlobalValues.VERARBEITET;
             Debug.WriteLine("noten fertig");
 
             int counter = 0;
@@ -86,10 +89,14 @@ namespace QisReaderBackground
                 {
                     htmlParser.NotenSpiegelDict[key] = null;
                 }
-                taskInstance.Progress = (uint)Math.Round(Globals.NOTENSPIEGELPROGRESSSTART + counter*scaler);
+                taskInstance.Progress = (uint)Math.Round(GlobalValues.NOTENSPIEGELPROGRESSSTART + counter*scaler);
                 counter++;
             }
+            jsonManager.Save(htmlParser.NotenSpiegelDict, GlobalValues.NOTENDETAILSFILENAME);
 
+            NotenData notenData = new NotenData();
+            notenData.ProcessNotenData(htmlParser.FachListe);
+            jsonManager.Save(notenData, GlobalValues.NOTENDATAFILENAME);
 
             _deferral.Complete();
         }
@@ -97,7 +104,7 @@ namespace QisReaderBackground
         private void InitScraper(Scraper scraper)
         {
             Dictionary<string, string> hochschulDict = GetHochschulUrlDict();
-            scraper.Baseurl = hochschulDict[(string)ApplicationData.Current.LocalSettings.Values[Globals.HOCHSCHULE]]; // in localSettings wird der key abgelegt
+            scraper.Baseurl = hochschulDict[(string)ApplicationData.Current.LocalSettings.Values[GlobalValues.HOCHSCHULE]]; // in localSettings wird der key abgelegt
 
             LoginDataSaver loginDataSaver = new LoginDataSaver();
             LoginData loginData = loginDataSaver.GetLoginData();
@@ -119,9 +126,6 @@ namespace QisReaderBackground
             return hochschulDict;
         }
 
-        private void SendNotenSpiegelProgess(float wert, IBackgroundTaskInstance taskInstance)
-        {
-            
-        }
+        
     }
 }

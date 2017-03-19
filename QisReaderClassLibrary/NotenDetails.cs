@@ -7,38 +7,28 @@ using System.Threading.Tasks;
 
 namespace QisReaderClassLibrary
 {
-    [DataContract]
-    [KnownTypeAttribute(typeof(NotenSpiegelDict))]
-    public class NotenSpiegelDict
-    {
-        [DataMember]
-        public List<string> Keys_NotenNamen { get; set; }
-        [DataMember]
-        public List<NotenDetails> Values_NotenSpiegel { get; set; }
-    }
-
+    // existiert für jede Note, bei der man auf "info" klicken kann, beinhaltet Detaildaten und Notenspiegel falls vorhanden
     [DataContract]
     [KnownTypeAttribute(typeof(NotenDetails))]
     public class NotenDetails
     {
         [DataMember]
-        public string AktÜberschrift { get; set; }
+        public string Überschrift { get; set; }
         [DataMember]
-        public List<string> AktDatenBeschriftung { get; set; }
+        public List<string> DatenBeschriftung { get; set; }
         [DataMember]
-        public List<string> AktDatenInhalt { get; set; }
+        public List<string> DatenInhalt { get; set; }
         [DataMember]
         public List<int> Verteilung { get; set; }
         [DataMember]
-        public float AktDurchschnitt { get; set; }
+        public float Durchschnitt { get; set; }
         [DataMember]
-        public float AktEigeneNote { get; set; } // hier etwas Fehl am Platz, aber sonst keinen besseren Platz gefunden
-
+        public float EigeneNote { get; set; } // hier etwas Fehl am Platz, aber sonst keinen besseren Platz gefunden
 
         public NotenDetails()
         {
-            AktDatenBeschriftung = new List<string>();
-            AktDatenInhalt = new List<string>();
+            DatenBeschriftung = new List<string>();
+            DatenInhalt = new List<string>();
             Verteilung = new List<int>();
         }
     }

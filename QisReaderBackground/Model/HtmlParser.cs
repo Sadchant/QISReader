@@ -90,18 +90,22 @@ namespace QisReaderBackground
                 aktCleanedTdList = new List<string>();
                 foreach (string aktTd in aktTdList) //geht über die Elemente einer Zeile
                 {
-                    Match match;
-                    if (aktTd.Contains(linkIndicator))
+                    Match match = null;
+                    if (aktTd.Contains(linkIndicator)) // wenn ein link in der Zelle ist
                     {
                         Regex regex = new Regex(@"<a href=""(.*)""><img"); // das Pattern, wo der Link zum Notenspiegel liegt
                         Match htmlMatch = regex.Match(aktTd);
-                        int fachnummer = Int32.Parse(aktCleanedTdList.First()); // das erste Element ist die Prüsfungsnummer, die schon ausgelesen wurde, wenn ein Link gefunden wird
-                        LinkDict.Add(fachnummer, htmlMatch.Groups[1].Value);
+                        try
+                        {
+                            int fachnummer = Int32.Parse(aktCleanedTdList.First()); // das erste Element ist die Prüsfungsnummer, die schon ausgelesen wurde, wenn ein Link gefunden wird
+                            LinkDict.Add(fachnummer, htmlMatch.Groups[1].Value);
+                        }
+                        catch { } // wenn das link speichern nicht funktioniert da keine prüfungsnummer vorliegt (also Int32.Parse fehlschlägt), fahre einfach fort
                         match = new Regex(@">(.*)<a").Match(aktTd);
                     }
-                    else
+                    else // es war kein Link in der Zelle
                         match = new Regex(@">(.*)").Match(aktTd);
-                    if (match.Success && match.Groups.Count > 1)
+                    if (match != null && match.Success && match.Groups.Count > 1)
                     {
                         aktTdString = match.Groups[1].Value;
                     }
@@ -113,7 +117,7 @@ namespace QisReaderBackground
                 if (isUeberschrift) // es ist eine Fachüberschrift
                 {
                     string[] daten = new string[] { aktCleanedTdList[0], aktCleanedTdList[1], aktCleanedTdList[4], aktCleanedTdList[5], aktCleanedTdList[6] };
-                    FachListe.Add(BuildFachHeader(daten));
+                    FachListe.Add(BuildFach(daten));
                 }
                 else // es ist ein Fachinhalt
                 {
@@ -123,45 +127,35 @@ namespace QisReaderBackground
             }
         }
 
-        private FachHeader BuildFachHeader(string[] daten)
+        private Fach BuildFach(string[] daten)
         {
             int memberId = 0; // dient dazu, im boolean-Feld festzulegen, ob die Variable im Fach existiert oder nicht
-            FachHeader fachHeader = new FachHeader();
+            Fach fachHeader = new Fach();
             memberId = 0;
             if (!string.IsNullOrEmpty(daten[memberId]))
-            {
-                fachHeader.Vorhanden[memberId] = true;
                 fachHeader.Id = int.Parse(daten[memberId]);
-            }
+
             memberId = 1;
             if (!string.IsNullOrEmpty(daten[memberId]))
-            {
-                fachHeader.Vorhanden[memberId] = true;
                 fachHeader.FachName = daten[memberId];
-            }
+
             memberId = 2;
             if (!string.IsNullOrEmpty(daten[memberId]))
-            {
-                fachHeader.Vorhanden[memberId] = true;
                 fachHeader.Note = float.Parse(daten[memberId]);
-            }
+
             memberId = 3;
             if (!string.IsNullOrEmpty(daten[memberId]))
             {
-                fachHeader.Vorhanden[memberId] = true;
                 if (daten[memberId] == "bestanden")
                     fachHeader.Bestanden = true;
                 else if (daten[memberId] == "nicht bestanden")
                     fachHeader.Bestanden = false;
-                else
-                    fachHeader.Vorhanden[memberId] = false;
+                // ansonsten bleibt er null!
             }
             memberId = 4;
             if (!string.IsNullOrEmpty(daten[memberId]))
-            {
-                fachHeader.Vorhanden[memberId] = true;
                 fachHeader.Cp = float.Parse(daten[memberId]);
-            }
+
             return fachHeader;
         }
 
@@ -170,33 +164,24 @@ namespace QisReaderBackground
             int memberId = 0; // dient dazu, im boolean-Feld festzulegen, ob die Variable im Fach existiert oder nicht
             FachInhalt fachInhalt = new FachInhalt();
             memberId = 0;
-            if (!string.IsNullOrEmpty(daten[memberId]))
-            {
-                fachInhalt.Vorhanden[memberId] = true;
+            if (!string.IsNullOrEmpty(daten[memberId])) // sollte das Feld nicht belegt sein ist ID dank dem int? ID standartmäßig null und nicht 0
                 fachInhalt.Id = int.Parse(daten[memberId]);
-            }
+
             memberId = 1;
             if (!string.IsNullOrEmpty(daten[memberId]))
-            {
-                fachInhalt.Vorhanden[memberId] = true;
                 fachInhalt.FachName = daten[memberId];
-            }
+   
             memberId = 2;
             if (!string.IsNullOrEmpty(daten[memberId]))
-            {
-                fachInhalt.Vorhanden[memberId] = true;
                 fachInhalt.Semester = daten[2];
-            }
+
             memberId = 3;
             if (!string.IsNullOrEmpty(daten[memberId]))
-            {
-                fachInhalt.Vorhanden[memberId] = true;
                 fachInhalt.Note = float.Parse(daten[memberId]);
-            }
+
             memberId = 4;
             if (!string.IsNullOrEmpty(daten[memberId]))
             {
-                fachInhalt.Vorhanden[memberId] = true;
                 if (daten[memberId] == "bestanden")
                     fachInhalt.Bestanden = true;
                 else
@@ -204,16 +189,11 @@ namespace QisReaderBackground
             }
             memberId = 5;
             if (!string.IsNullOrEmpty(daten[memberId]))
-            {
-                fachInhalt.Vorhanden[memberId] = true;
                 fachInhalt.Cp = float.Parse(daten[memberId]);
-            }
+
             memberId = 6;
             if (!string.IsNullOrEmpty(daten[memberId]))
-            {
-                fachInhalt.Vorhanden[memberId] = true;
                 fachInhalt.Versuch = int.Parse(daten[6]);
-            }
             return fachInhalt;
         }
 
@@ -242,7 +222,7 @@ namespace QisReaderBackground
             string aktThString;
             int aktThEndeIndex;
 
-            notenDetails.AktDatenBeschriftung.Clear();
+            notenDetails.DatenBeschriftung.Clear();
             for (int index = 0; ; index += beginth.Length) // iteriert über alle <th>
             {
                 index = table.IndexOf(beginth, index);
@@ -254,7 +234,7 @@ namespace QisReaderBackground
                 if (match.Success && match.Groups.Count > 1)
                 {
                     string matchResult = match.Groups[1].Value.Replace("&nbsp;", ""); // aus dem matchresult komischen HTML-Müll entfernen
-                    notenDetails.AktDatenBeschriftung.Add(matchResult);
+                    notenDetails.DatenBeschriftung.Add(matchResult);
                 }
             }
 
@@ -263,7 +243,7 @@ namespace QisReaderBackground
             string aktTdString;
             int aktTdEndeIndex;
 
-            notenDetails.AktDatenInhalt.Clear();
+            notenDetails.DatenInhalt.Clear();
             for (int index = 0; ; index += begintd.Length) // iteriert über alle <th>
             {
                 index = table.IndexOf(begintd, index);
@@ -276,7 +256,7 @@ namespace QisReaderBackground
                 {
 
                     string matchResult = match.Groups[1].Value.Trim(); // aus dem matchresult Whitespace entfernen
-                    notenDetails.AktDatenInhalt.Add(matchResult);
+                    notenDetails.DatenInhalt.Add(matchResult);
                 }
             }
         }
@@ -332,18 +312,18 @@ namespace QisReaderBackground
         // filtert aus den beiden Listen den Fachnamen heraus, speichert ihn in der Überschrift-Property und löscht ihn aus der Beschriftungs- und Daten-Liste
         private void ExtractÜberschrift(NotenDetails notenDetails)
         {
-            notenDetails.AktÜberschrift = "";
-            int überschriftIndex = notenDetails.AktDatenBeschriftung.IndexOf("Prüfungstext");
-            notenDetails.AktÜberschrift = notenDetails.AktDatenInhalt[überschriftIndex];
-            notenDetails.AktDatenBeschriftung.RemoveAt(überschriftIndex);
-            notenDetails.AktDatenInhalt.RemoveAt(überschriftIndex);
+            notenDetails.Überschrift = "";
+            int überschriftIndex = notenDetails.DatenBeschriftung.IndexOf("Prüfungstext");
+            notenDetails.Überschrift = notenDetails.DatenInhalt[überschriftIndex];
+            notenDetails.DatenBeschriftung.RemoveAt(überschriftIndex);
+            notenDetails.DatenInhalt.RemoveAt(überschriftIndex);
         }
 
         // findet die eigene in den Noten-Daten
         private void FindEigeneNote(NotenDetails notenDetails)
         {
-            int noteIndex = notenDetails.AktDatenBeschriftung.IndexOf("Note");
-            notenDetails.AktEigeneNote = float.Parse(notenDetails.AktDatenInhalt[noteIndex]);
+            int noteIndex = notenDetails.DatenBeschriftung.IndexOf("Note");
+            notenDetails.EigeneNote = float.Parse(notenDetails.DatenInhalt[noteIndex]);
         }
 
         // sucht den Durchschnitt aus der html-Seite heraus und
@@ -352,11 +332,11 @@ namespace QisReaderBackground
             string durchschnittsLine = GetSubStringBetween(htmlPage, @"Durchschnittsnote", "</tr>");
             string durchschnittsLineEdited = GetSubStringBetween(durchschnittsLine, @"</td>", "</td>"); // etwas umständlich aber so geht es
             Match match = new Regex(@">(.*)").Match(durchschnittsLineEdited);
-            notenDetails.AktDurchschnitt = 0;
+            notenDetails.Durchschnitt = 0;
             if (match.Success && match.Groups.Count > 1)
             {
                 string res = match.Groups[1].Value;
-                notenDetails.AktDurchschnitt = float.Parse(match.Groups[1].Value);
+                notenDetails.Durchschnitt = float.Parse(match.Groups[1].Value);
             }
         }
     }

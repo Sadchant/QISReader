@@ -265,7 +265,7 @@ namespace QISReader.Model
                 }
                 trIndex++;
             }
-            AktNotenSpiegel.AktDurchschnitt = getDurchschnitt(htmlPage);
+            AktNotenSpiegel.Durchschnitt = getDurchschnitt(htmlPage);
         }
 
         public void parseNotenDaten(string htmlPage)
@@ -277,7 +277,7 @@ namespace QISReader.Model
             string aktThString;
             int aktThEndeIndex;
 
-            AktNotenSpiegel.AktDatenBeschriftung.Clear();
+            AktNotenSpiegel.DatenBeschriftung.Clear();
             for (int index = 0; ; index += beginth.Length) // iteriert über alle <th>
             {
                 index = table.IndexOf(beginth, index);
@@ -289,7 +289,7 @@ namespace QISReader.Model
                 if (match.Success && match.Groups.Count > 1)
                 {
                     string matchResult = match.Groups[1].Value.Replace("&nbsp;", ""); // aus dem matchresult komischen HTML-Müll entfernen
-                    AktNotenSpiegel.AktDatenBeschriftung.Add(matchResult);
+                    AktNotenSpiegel.DatenBeschriftung.Add(matchResult);
                 }
             }
 
@@ -298,7 +298,7 @@ namespace QISReader.Model
             string aktTdString;
             int aktTdEndeIndex;
 
-            AktNotenSpiegel.AktDatenInhalt.Clear();
+            AktNotenSpiegel.DatenInhalt.Clear();
             for (int index = 0; ; index += begintd.Length) // iteriert über alle <th>
             {
                 index = table.IndexOf(begintd, index);
@@ -311,7 +311,7 @@ namespace QISReader.Model
                 {
                     
                     string matchResult = match.Groups[1].Value.Trim(); // aus dem matchresult Whitespace entfernen
-                    AktNotenSpiegel.AktDatenInhalt.Add(matchResult);
+                    AktNotenSpiegel.DatenInhalt.Add(matchResult);
                 }
             }
             extractÜberschrift();
@@ -321,18 +321,18 @@ namespace QISReader.Model
         // filtert aus den beiden Listen den Fachnamen heraus, speichert ihn in der Überschrift-Property und löscht ihn aus der Beschriftungs- und Daten-Liste
         private void extractÜberschrift()
         {
-            AktNotenSpiegel.AktÜberschrift = "";
-            int überschriftIndex = AktNotenSpiegel.AktDatenBeschriftung.IndexOf("Prüfungstext");
-            AktNotenSpiegel.AktÜberschrift = AktNotenSpiegel.AktDatenInhalt[überschriftIndex];
-            AktNotenSpiegel.AktDatenBeschriftung.RemoveAt(überschriftIndex);
-            AktNotenSpiegel.AktDatenInhalt.RemoveAt(überschriftIndex);
+            AktNotenSpiegel.Überschrift = "";
+            int überschriftIndex = AktNotenSpiegel.DatenBeschriftung.IndexOf("Prüfungstext");
+            AktNotenSpiegel.Überschrift = AktNotenSpiegel.DatenInhalt[überschriftIndex];
+            AktNotenSpiegel.DatenBeschriftung.RemoveAt(überschriftIndex);
+            AktNotenSpiegel.DatenInhalt.RemoveAt(überschriftIndex);
         }
 
         private void findEigeneNote()
         {
-            AktNotenSpiegel.AktEigeneNote = 0;
-            int noteIndex = AktNotenSpiegel.AktDatenBeschriftung.IndexOf("Note");
-            AktNotenSpiegel.AktEigeneNote = float.Parse(AktNotenSpiegel.AktDatenInhalt[noteIndex]);
+            AktNotenSpiegel.EigeneNote = 0;
+            int noteIndex = AktNotenSpiegel.DatenBeschriftung.IndexOf("Note");
+            AktNotenSpiegel.EigeneNote = float.Parse(AktNotenSpiegel.DatenInhalt[noteIndex]);
         }
 
         // sucht den Durchschnitt aus der html-Seite heraus und

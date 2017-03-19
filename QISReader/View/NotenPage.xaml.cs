@@ -44,7 +44,7 @@ namespace QISReader
         int spaceAboveFachHeader = 30;
         int spaceAboveFachInhalt = 5;
         int aktSpaceAbove;
-        FachHeader aktFachHeader;
+        Fach aktFach;
         FachInhalt aktFachInhalt;
         bool isFirst = true;
         int aktRow = 1; // in aktRow kommt ein FachText rein, steht auf 1 weil auf dem 0ten die Überschrift "Notenübersicht" steht
@@ -102,7 +102,7 @@ namespace QISReader
             }
         }
 
-        private SolidColorBrush getColorFromNote(float note)
+        private SolidColorBrush getColorFromNote(float? note)
         {
             if (note < 1.0 + 0.15)
             {
@@ -215,48 +215,7 @@ namespace QISReader
             bool[] notenToShow = App.LogicManager.FachManager.getVersucheToShow(); // hole Liste um nur die Versuche anzuzeigen, die interessant sind
             foreach (Fach aktFach in fachList)
             {
-                if (aktFach is FachHeader)
-                {
-                    aktFachHeader = (FachHeader)aktFach;
-                    aktSpaceAbove = spaceAboveFachHeader;
-
-                    // das Rect für die Hintergrundfarbe
-                    // zuerst Farbe festlegen
-                    SolidColorBrush backgroundColor;
-                    if (aktFachHeader.Vorhanden[2] && aktFachHeader.Note > 0) // Note
-                    {
-                        backgroundColor = getColorFromNote(aktFachHeader.Note);
-                    }
-                    else if (aktFachHeader.Vorhanden[3])
-                    {
-                        if (aktFachHeader.Bestanden)
-                            backgroundColor = notenFarbenDict[0.0f]; // 0.0 ist der Key für das bestanden-Blau
-                        else
-                            backgroundColor = notenFarbenDict[5.0f]; // wenn nicht bestanden nutze das 5.0-Rot
-                    }
-                    else
-                        backgroundColor = new SolidColorBrush(Colors.LightGray);
-                    Rectangle testRect = new Rectangle { Fill = backgroundColor };
-                    addToNotenGrid(testRect, aktRow, 0);
-                    Grid.SetColumnSpan(testRect, 11);
-
-                    if (aktFachHeader.Vorhanden[1]) // Fachname
-                    {
-                        TextBlock fachText = new TextBlock { Text = aktFachHeader.FachName, FontSize = 20, /*Margin = new Thickness(20, 0, 0, 0),*/ FontWeight = FontWeights.Bold, TextWrapping = TextWrapping.Wrap, MaxWidth = 480, HorizontalAlignment = HorizontalAlignment.Left };
-                        addToNotenGrid(fachText, aktRow, 1);
-                    }
-                    if (aktFachHeader.Vorhanden[2]) // Note
-                    {
-                        TextBlock notenText = new TextBlock { Text = aktFachHeader.Note.ToString("0.0"), FontSize = 20, FontWeight = FontWeights.Bold, HorizontalAlignment = HorizontalAlignment.Right };
-                        addToNotenGrid(notenText, aktRow, 3);
-                    }
-                    if (aktFachHeader.Vorhanden[4]) // Cp
-                    {
-                        TextBlock cpText = new TextBlock { Text = aktFachHeader.Cp.ToString("0.0") + " CP", FontSize = 20, FontWeight = FontWeights.Bold, HorizontalAlignment = HorizontalAlignment.Right };
-                        addToNotenGrid(cpText, aktRow, 7);
-                    }
-                }
-                else
+                if (aktFach is FachInhalt)
                 {
                     aktFachInhalt = (FachInhalt)aktFach;
                     aktSpaceAbove = spaceAboveFachInhalt;
@@ -265,13 +224,13 @@ namespace QISReader
                     // das Rect für die Hintergrundfarbe
                     // zuerst Farbe festlegen
                     SolidColorBrush backgroundColor;
-                    if (aktFachInhalt.Vorhanden[3] && aktFachInhalt.Note > 0) // Note
+                    if (aktFachInhalt.Note != null && aktFachInhalt.Note > 0) // Note
                     {
                         backgroundColor = getColorFromNote(aktFachInhalt.Note);
                     }
-                    else if (aktFachInhalt.Vorhanden[4])
+                    else if (aktFachInhalt.Bestanden != null) // sollte Bestanden null sein bleibt die Farbe Grau
                     {
-                        if (aktFachInhalt.Bestanden)
+                        if ((bool)aktFachInhalt.Bestanden)
                             backgroundColor = notenFarbenDict[0.0f]; // 0.0 ist der Key für das bestanden-Blau
                         else
                             backgroundColor = notenFarbenDict[5.0f]; // wenn nicht bestanden nutze das 5.0-Rot
@@ -284,17 +243,17 @@ namespace QISReader
                     addToNotenGrid(testRect, aktRow, 0);
                     Grid.SetColumnSpan(testRect, 11);
 
-                    if (aktFachInhalt.Vorhanden[1]) // Fachname
+                    if (aktFachInhalt.FachName != null) // Fachname
                     {
                         TextBlock fachText = new TextBlock { Text = aktFachInhalt.FachName, FontSize = 18, /*Margin = new Thickness(40, 0, 0, 0),*/ TextWrapping = TextWrapping.Wrap, MaxWidth = 480, /*FontStyle = FontStyle.Italic*/ };
                         addToNotenGrid(fachText, aktRow, 1);
                     }
-                    if (aktFachInhalt.Vorhanden[3]) // Note
+                    if (aktFachInhalt.Note != null) // Note
                     {
-                        TextBlock notenText = new TextBlock { Text = aktFachInhalt.Note.ToString("0.0"), FontSize = 18, HorizontalAlignment = HorizontalAlignment.Right, /*FontStyle = FontStyle.Italic*/ };
+                        TextBlock notenText = new TextBlock { Text = ((float)aktFachInhalt.Note).ToString("0.0"), FontSize = 18, HorizontalAlignment = HorizontalAlignment.Right, /*FontStyle = FontStyle.Italic*/ };
                         addToNotenGrid(notenText, aktRow, 3);
                     }
-                    if (aktFachInhalt.Vorhanden[6]) // Versuch
+                    if (aktFachInhalt.Versuch != null) // Versuch
                     {
                         if (notenToShow[i]) // die trues im bool-Array notenToShow wurden durch getNotenToShow() an den gewünschten Stellen auf true gesetzt
                         {
@@ -303,12 +262,14 @@ namespace QISReader
                         }
 
                     }
-                    if (aktFachInhalt.Vorhanden[5]) // Cp
+                    if (aktFachInhalt.Cp != null) // Cp
                     {
-                        TextBlock cpText = new TextBlock { Text = aktFachInhalt.Cp.ToString("0.0") + " Cp", FontSize = 18, HorizontalAlignment = HorizontalAlignment.Right, /*FontStyle = FontStyle.Italic*/ };
+                        TextBlock cpText = new TextBlock { Text = ((float)aktFachInhalt.Cp).ToString("0.0") + " Cp", FontSize = 18, HorizontalAlignment = HorizontalAlignment.Right, /*FontStyle = FontStyle.Italic*/ };
                         addToNotenGrid(cpText, aktRow, 7);
                     }
-                    if (linkDict.ContainsKey(aktFachInhalt.Id))
+                    int id = -1;
+                    if (aktFachInhalt.Id != null) id = (int)aktFachInhalt.Id;
+                    if (linkDict.ContainsKey(id))
                     {
                         Button notenSpiegelButton = new Button { Content = "Notenspiegel", Padding = new Thickness(0), Margin = new Thickness(0, 0, 15, 0), CommandParameter = aktFachInhalt.Id };
                         notenSpiegelButton.Click += NotenSpiegelClick;
@@ -316,6 +277,47 @@ namespace QISReader
                     }
                     //NotenGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
                 }
+                else //ansonsten ist es ein Fach
+                {
+                    aktSpaceAbove = spaceAboveFachHeader;
+
+                    // das Rect für die Hintergrundfarbe
+                    // zuerst Farbe festlegen
+                    SolidColorBrush backgroundColor;
+                    if (aktFach.Note != null && this.aktFach.Note > 0) // Note
+                    {
+                        backgroundColor = getColorFromNote(this.aktFach.Note);
+                    }
+                    else if (aktFach.Bestanden != null)
+                    {
+                        if ((bool)aktFach.Bestanden)
+                            backgroundColor = notenFarbenDict[0.0f]; // 0.0 ist der Key für das bestanden-Blau
+                        else
+                            backgroundColor = notenFarbenDict[5.0f]; // wenn nicht bestanden nutze das 5.0-Rot
+                    }
+                    else
+                        backgroundColor = new SolidColorBrush(Colors.LightGray);
+                    Rectangle testRect = new Rectangle { Fill = backgroundColor };
+                    addToNotenGrid(testRect, aktRow, 0);
+                    Grid.SetColumnSpan(testRect, 11);
+
+                    if (aktFach.FachName != null) // Fachname
+                    {
+                        TextBlock fachText = new TextBlock { Text = aktFach.FachName, FontSize = 20, /*Margin = new Thickness(20, 0, 0, 0),*/ FontWeight = FontWeights.Bold, TextWrapping = TextWrapping.Wrap, MaxWidth = 480, HorizontalAlignment = HorizontalAlignment.Left };
+                        addToNotenGrid(fachText, aktRow, 1);
+                    }
+                    if (aktFach.Note != null) // Note
+                    {
+                        TextBlock notenText = new TextBlock { Text = ((int)aktFach.Note).ToString("0.0"), FontSize = 20, FontWeight = FontWeights.Bold, HorizontalAlignment = HorizontalAlignment.Right };
+                        addToNotenGrid(notenText, aktRow, 3);
+                    }
+                    if (aktFach.Cp != null) // Cp
+                    {
+                        TextBlock cpText = new TextBlock { Text = ((float)aktFach.Cp).ToString("0.0") + " CP", FontSize = 20, FontWeight = FontWeights.Bold, HorizontalAlignment = HorizontalAlignment.Right };
+                        addToNotenGrid(cpText, aktRow, 7);
+                    }
+                }
+                
                 aktRow += 2;
                 // wenns nicht der erste ist, mache eine Leerzeile
                 if (isFirst)
