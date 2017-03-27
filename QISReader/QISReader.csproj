@@ -89,14 +89,18 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Content Include="..\QisReaderClassLibrary\Resources\hochschuldict.json">
+      <Link>Resources\hochschuldict.json</Link>
+    </Content>
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\LoginDataSaver.cs" />
-    <Compile Include="Model\NotenDataSaver.cs" />
+    <Compile Include="Model\BackgroundTaskManager.cs" />
+    <Compile Include="Model\ReadQis.cs" />
+    <Compile Include="Model\UpdateData.cs" />
     <Compile Include="ViewModel\BestandenViewModel.cs" />
     <Compile Include="ViewModel\DatenViewModel.cs" />
     <Compile Include="ViewModel\DelegateCommand.cs" />
@@ -107,19 +111,22 @@
     <Compile Include="View\BestandenPage.xaml.cs">
       <DependentUpon>BestandenPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\BlankPage1.xaml.cs">
+      <DependentUpon>BlankPage1.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\DatenPage.xaml.cs">
       <DependentUpon>DatenPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\EinstellungenPage.xaml.cs">
       <DependentUpon>EinstellungenPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\LoadDetailsPage.xaml.cs">
+      <DependentUpon>LoadDetailsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Model\FachManager.cs" />
     <Compile Include="Model\FileReader.cs" />
-    <Compile Include="Model\NotenParser.cs" />
-    <Compile Include="Model\Scraper.cs" />
     <Compile Include="Model\Scraper2.cs" />
     <Compile Include="Model\LogicManager.cs" />
     <Compile Include="View\FlexibleNavigationPage.xaml.cs">
@@ -131,8 +138,8 @@
     <Compile Include="View\NotenPage.xaml.cs">
       <DependentUpon>NotenPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\NotenSpiegelPage.xaml.cs">
-      <DependentUpon>NotenSpiegelPage.xaml</DependentUpon>
+    <Compile Include="View\NotenDetailsPage.xaml.cs">
+      <DependentUpon>NotenDetailsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="View\StatistikenPage.xaml.cs">
@@ -186,11 +193,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\BlankPage1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\DatenPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\EinstellungenPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\LoadDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -215,7 +230,7 @@
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
-    <Page Include="View\NotenSpiegelPage.xaml">
+    <Page Include="View\NotenDetailsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

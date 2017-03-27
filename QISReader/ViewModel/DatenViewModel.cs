@@ -21,22 +21,17 @@ namespace QISReader.ViewModel
 
     public class DatenViewModel
     {
-        public List<Zeile> DatenList { get; }
-        public string Überschrift { get; }
+        public List<Zeile> DatenList { get; set; }
+        public string Überschrift { get; set; }
 
-        private NotenParser globalNotenParser;
-        //SPÄTER DATEN NICHT AUS DEM PARSER HOLEN SONDERN AUS DATEI
-
-        public DatenViewModel()
+        public void Init(List<string> datenBeschriftungList, List<string> datenInhaltList, string überschrift)
         {
             DatenList = new List<Zeile>();
-            globalNotenParser = App.LogicManager.NotenParser;
-            NotenSpiegel aktNotenSpiegel = globalNotenParser.AktNotenSpiegel;
-            for(int i=0; i < aktNotenSpiegel.AktDatenBeschriftung.Count; i++)
+            for (int i = 0; i < datenBeschriftungList.Count; i++)
             {
-                DatenList.Add(new Zeile(aktNotenSpiegel.AktDatenBeschriftung[i], aktNotenSpiegel.AktDatenInhalt[i]));
+                DatenList.Add(new Zeile(datenBeschriftungList[i], datenInhaltList[i]));
             }
-            Überschrift = aktNotenSpiegel.AktÜberschrift;
+            Überschrift = überschrift;
         }
     }
 }

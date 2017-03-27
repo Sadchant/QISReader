@@ -105,17 +105,21 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <None Include="project.json" />
+    <Content Include="Resources\hochschuldict.json" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Fach.cs" />
     <Compile Include="GlobalValues.cs" />
+    <Compile Include="HtmlParser.cs" />
     <Compile Include="JsonManager.cs" />
     <Compile Include="LoginDataSaver.cs" />
     <Compile Include="NotenData.cs" />
     <Compile Include="NotenDetails.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scraper.cs" />
     <EmbeddedResource Include="Properties\QisReaderClassLibrary.rd.xml" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

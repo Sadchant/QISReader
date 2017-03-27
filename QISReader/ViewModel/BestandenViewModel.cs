@@ -9,35 +9,30 @@ namespace QISReader.ViewModel
 {
     public class BestandenViewModel
     {
-        private NotenParser globalNotenParser = App.LogicManager.NotenParser;
-        public string BestandenText { get; }
-        public string NichtBestandenText { get; }
-        public string TeilnehmerText { get; }
+        public string BestandenText { get; set; }
+        public string NichtBestandenText { get; set; }
+        public string TeilnehmerText { get; set; }
         public float NichtBestandenRectWidth { get; set; }
 
-        private int bestandenCount;
-        private int nichtBestandenCount;
-        private int teilnehmer;
-
-
-        public BestandenViewModel()
+        public void Init(float gridWidth, List<int> verteilung)
         {
-            var bestandenAnzahl = globalNotenParser.AktNotenSpiegel.Verteilung.Take(globalNotenParser.AktNotenSpiegel.Verteilung.Count - 1);
-            foreach(int notenAnzahl in bestandenAnzahl)
+            int bestandenCount = 0;
+            int nichtBestandenCount;
+            int teilnehmer;
+
+            var bestandenAnzahl = verteilung.Take(verteilung.Count - 1);
+            foreach (int notenAnzahl in bestandenAnzahl)
             {
                 bestandenCount += notenAnzahl;
             }
-            nichtBestandenCount = globalNotenParser.AktNotenSpiegel.Verteilung.Last();
+            nichtBestandenCount = verteilung.Last();
             teilnehmer = bestandenCount + nichtBestandenCount;
 
             float percentScaler = 100.0f / teilnehmer;
-            BestandenText = "Bestanden: " + bestandenCount + " (" + Math.Round((Decimal)(bestandenCount * percentScaler), 1, MidpointRounding.AwayFromZero)  + "%)";
+            BestandenText = "Bestanden: " + bestandenCount + " (" + Math.Round((Decimal)(bestandenCount * percentScaler), 1, MidpointRounding.AwayFromZero) + "%)";
             NichtBestandenText = "Nicht Bestanden: " + nichtBestandenCount + " (" + Math.Round((Decimal)(nichtBestandenCount * percentScaler), 1, MidpointRounding.AwayFromZero) + "%)";
             TeilnehmerText = "Teilnehmer: " + teilnehmer;
-        }
 
-        public void Init(float gridWidth)
-        {
             NichtBestandenRectWidth = gridWidth / teilnehmer * nichtBestandenCount;
         }
     }

@@ -63,7 +63,7 @@
     </Style>
 
     <Style TargetType="Border" x:Key="platzierterTextBorderStyle">
-        <Setter Property="Background" Value="White" />
+        <!--<Setter Property="Background" Value="White" />-->
         <Setter Property="Grid.ColumnSpan" Value="3" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="HorizontalAlignment" Value="Center" />

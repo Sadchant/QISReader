@@ -10,6 +10,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -29,9 +30,6 @@ namespace QISReader
     /// </summary>
     public sealed partial class LoginPage : Page
     {
-        Scraper globalScraper;
-        NotenParser globalNotenParser;
-        FachManager globalFachManager;
 
         private LoginViewModel loginViewModel;
         private SolidColorBrush redBrush;
@@ -47,25 +45,24 @@ namespace QISReader
                 ViewModel = DataContext as LoginViewModel;
             };
             loginViewModel = (LoginViewModel)this.DataContext;
-            loginViewModel.StartAnmeldungEvent += HandleStartAnmeldung;
-            loginViewModel.WrongLoginEvent += HandleWrongLogin;
-            loginViewModel.KeineVerbindungEvent += HandleKeineVerbindung;
-            loginViewModel.LoginFehlerEvent += HandleLoginFehler;
-            loginViewModel.StartNotenNavigationEvent += HandleStartNotenNavigvation;
-            loginViewModel.NotenNavigationsFehlerEvent += HandleNotenNavigationsFehler;
-            loginViewModel.StartNotenVerarbeitungEvent += HandleStartNotenVerarbeitung;
-            loginViewModel.NotenVerarbeitungFehlerEvent += HandleNotenVerarbeitungFehler;
-            loginViewModel.NotenVerarbeitungFertigEvent += HandleNotenVerarbeitungFertig;
+            App.LogicManager.ReadQis.StartAnmeldungEvent += HandleStartAnmeldung;
+            App.LogicManager.ReadQis.WrongLoginEvent += HandleWrongLogin;
+            App.LogicManager.ReadQis.KeineVerbindungEvent += HandleKeineVerbindung;
+            App.LogicManager.ReadQis.LoginFehlerEvent += HandleLoginFehler;
+            App.LogicManager.ReadQis.StartNotenNavigationEvent += HandleStartNotenNavigvation;
+            App.LogicManager.ReadQis.NotenNavigationsFehlerEvent += HandleNotenNavigationsFehler;
+            App.LogicManager.ReadQis.StartNotenVerarbeitungEvent += HandleStartNotenVerarbeitung;
+            App.LogicManager.ReadQis.NotenVerarbeitungFehlerEvent += HandleNotenVerarbeitungFehler;
+            App.LogicManager.ReadQis.NotenVerarbeitungFertigEvent += HandleNotenVerarbeitungFertig;
 
             redBrush = new SolidColorBrush(Colors.Red);
             accentBrush = new SolidColorBrush((Color)this.Resources["SystemAccentColor"]);
-
-            globalScraper = App.LogicManager.Scraper;
-            globalNotenParser = App.LogicManager.NotenParser;
-            globalFachManager = App.LogicManager.FachManager;
         }
 
-        
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            ((LoginViewModel)this.DataContext).LoadContent();
+        }
 
         private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -83,100 +80,6 @@ namespace QISReader
             InfoPanel.Visibility = Visibility.Collapsed;
         }
 
-        private async void AnmeldeButton_Click(object sender, RoutedEventArgs e)
-        {
-            //testMethode();
-            //Farben für den Statustext
-            
-
-            // ausgefüllte Felder in Scraper eintragen
-            globalScraper.Username = UsernameTextBox.Text;
-            globalScraper.Password = PasswordBox.Password;
-            globalScraper.Baseurl = "https://qis.hs-rm.de/qisserver/rds?state=";
-            
-
-            // ProgressText-Farbe zurücksetzen
-            ProgressText.Foreground = accentBrush;
-
-
-            //### Anmedlung
-            LoginProgressRing.Visibility = Visibility.Visible;
-            ProgressText.Visibility = Visibility.Visible;
-            ProgressText.Text = "Anmeldung...";
-            
-
-            string htmlPage; // hier wird die vom Scrapen erzeugte HTML-Seite drin gespeichert
-            List<string> notenStringList;
-            try
-            {
-                await globalScraper.Login();
-            }
-            catch (Exception exception)
-            {
-                LoginProgressRing.Visibility = Visibility.Collapsed;
-                ProgressText.Foreground = redBrush;
-                if (exception is WrongLoginException)
-                {
-                    // Falls vorher die Verbindung fehlgeschlagen ist und jetzt ein falscher Benutzername eingegeben wurde
-                    AnmeldeButton.Content = "Anmelden";
-
-                    ProgressText.Text = "Falscher Nutzername oder falsches Passwort!";
-                    UsernameTextBox.BorderBrush = redBrush;
-                    PasswordBox.BorderBrush = redBrush;
-                }
-                else if (exception is AggregateException)
-                {
-                    ProgressText.Text = "Fehler: Keine Verbindung möglich!";
-                    AnmeldeButton.Content = "Erneut versuchen";
-                }
-                else
-                    ProgressText.Text = "Fehler bei der Anmeldung. Möglicherweise hilft ein App-Restart!";
-
-                return;
-            }
-            
-            // ### zu Noten navigieren, Ergebnis ist String mit Noten-Html-Seite
-            ProgressText.Text = "Navigiere zu Noten...";
-            try
-            {
-                htmlPage = await globalScraper.NavigateQis();
-            }
-            catch (Exception exception)
-            {
-                LoginProgressRing.Visibility = Visibility.Collapsed;
-                ProgressText.Foreground = redBrush;
-
-                if (exception is AggregateException)
-                {
-                    ProgressText.Text = "Fehler: Verbindung abgebrochen!";
-                    AnmeldeButton.Content = "Erneut versuchen";
-                }
-                else //ansonsten ist es eine ScrapQISException oder eine normale Exception
-                    ProgressText.Text = "Fehler bei der Webbrowser-Simulation!";
-
-                return;
-            }
-
-            // ### Noten verarbeiten, Ergebnis ist eine Liste mit Fach-Objekten
-            ProgressText.Text = "Verarbeite Noten...";
-            NotenParser notenParser = new NotenParser();
-            try
-            {
-                notenStringList = notenParser.parseNoten(htmlPage);
-                globalFachManager.buildFachObjektList(notenStringList);
-            }
-            catch (Exception) // hier sollte eigentlich nichts schief gehen, wenn doch ist mein htmlParser fehlerhaft!
-            {
-                LoginProgressRing.Visibility = Visibility.Collapsed;
-                ProgressText.Foreground = redBrush;
-                ProgressText.Text = "Fehler: Notenverarbeitung fehlgeschlagen!";
-                return;
-            }
-            LoginProgressRing.Visibility = Visibility.Collapsed;
-            this.Frame.Navigate(typeof(NotenPage));
-            //LoginProgressRing.Visibility = Visibility.Collapsed;
-        }
-
         private void UsernameTextBox_GotFocus(object sender, RoutedEventArgs e)
         {
             // Farben der TextFleder zurücksetzen, falls sie vorher rot waren wegen falscher Eingabe
@@ -191,86 +94,100 @@ namespace QISReader
             PasswordBox.BorderBrush = new SolidColorBrush(Colors.Black);
         }
 
-        private async void testMethode()
+        private async void HandleError()
         {
-            Scraper2 testScraper = new Scraper2();
-            string html = await testScraper.ClientScraper();
-            NotenParser notenParser = new NotenParser();
-            List<String> notenStringList = notenParser.parseNoten(html);
-            FachManager fachManager = new FachManager();
-            fachManager.buildFachObjektList(notenStringList);
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                LoginProgressRing.Visibility = Visibility.Collapsed;
+                ProgressText.Foreground = redBrush;
+                AnmeldeButton.IsEnabled = true; //Button wieder aktivieren, damit man es erneut versuchen kann
+            });
         }
 
-
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private async void HandleStartAnmeldung()
         {
-            ((LoginViewModel)this.DataContext).loadContent();
-        }        
-
-        private void HandleError()
-        {
-            LoginProgressRing.Visibility = Visibility.Collapsed;
-            ProgressText.Foreground = redBrush;
-            AnmeldeButton.IsEnabled = true; //Button wieder aktivieren, damit man es erneut versuchen kann
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                AnmeldeButton.IsEnabled = false; //Anmelde-Button deaktivieren, damit man sich während dem EInloggen nicht nochmal einloggt
+                ProgressText.Foreground = accentBrush;
+                LoginProgressRing.Visibility = Visibility.Visible;
+                ProgressText.Visibility = Visibility.Visible;
+                ProgressText.Text = "Anmeldung...";
+            });
         }
 
-        private void HandleStartAnmeldung()
+        private async void HandleWrongLogin()
         {
-            AnmeldeButton.IsEnabled = false; //Anmelde-Button deaktivieren, damit man sich während dem EInloggen nicht nochmal einloggt
-            ProgressText.Foreground = accentBrush;
-            LoginProgressRing.Visibility = Visibility.Visible;
-            ProgressText.Visibility = Visibility.Visible;
-            ProgressText.Text = "Anmeldung...";
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                 HandleError();
+                 AnmeldeButton.Content = "Anmelden";
+                 ProgressText.Text = "Falscher Nutzername oder falsches Passwort!";
+                 UsernameTextBox.BorderBrush = redBrush;
+                 PasswordBox.BorderBrush = redBrush;
+             });
         }
 
-        private void HandleWrongLogin()
+        private async void HandleKeineVerbindung()
         {
-            HandleError();
-            AnmeldeButton.Content = "Anmelden";
-            ProgressText.Text = "Falscher Nutzername oder falsches Passwort!";
-            UsernameTextBox.BorderBrush = redBrush;
-            PasswordBox.BorderBrush = redBrush;
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                HandleError();
+                ProgressText.Text = "Fehler: Keine Verbindung möglich!";
+                AnmeldeButton.Content = "Erneut versuchen";
+            });
         }
 
-        private void HandleKeineVerbindung()
+        private async void HandleLoginFehler()
         {
-            HandleError();
-            ProgressText.Text = "Fehler: Keine Verbindung möglich!";
-            AnmeldeButton.Content = "Erneut versuchen";
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                HandleError();
+                ProgressText.Text = "Fehler bei der Anmeldung. Möglicherweise hilft ein App-Restart!";
+            });
         }
 
-        private void HandleLoginFehler()
+        private async void HandleStartNotenNavigvation()
         {
-            HandleError();
-            ProgressText.Text = "Fehler bei der Anmeldung. Möglicherweise hilft ein App-Restart!";
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                ProgressText.Text = "Navigiere zu Noten...";
+            });
         }
 
-        private void HandleStartNotenNavigvation()
+        private async void HandleNotenNavigationsFehler()
         {
-            ProgressText.Text = "Navigiere zu Noten...";
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                HandleError();
+                ProgressText.Text = "Fehler bei der Webbrowser-Simulation!";
+            });
         }
 
-        private void HandleNotenNavigationsFehler()
+        private async void HandleStartNotenVerarbeitung()
         {
-            ProgressText.Text = "Fehler bei der Webbrowser-Simulation!";
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                ProgressText.Text = "Verarbeite Noten...";
+            });
         }
 
-        private void HandleStartNotenVerarbeitung()
+        private async void HandleNotenVerarbeitungFehler()
         {
-            ProgressText.Text = "Verarbeite Noten...";
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                HandleError();
+                ProgressText.Text = "Fehler: Notenverarbeitung fehlgeschlagen!";
+            });
         }
 
-        private void HandleNotenVerarbeitungFehler()
+        private async void HandleNotenVerarbeitungFertig()
         {
-            HandleError();
-            ProgressText.Text = "Fehler: Notenverarbeitung fehlgeschlagen!";
-        }
-
-        private void HandleNotenVerarbeitungFertig()
-        {
-            LoginProgressRing.Visibility = Visibility.Collapsed;
-            this.Frame.Navigate(typeof(NavigationPage), false); // Noten sind schon geladen und müssen nicht aus dem jsonFile wiederhergestellt werden, also false mitgeben
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                LoginProgressRing.Visibility = Visibility.Collapsed;
+                this.Frame.Navigate(typeof(NavigationPage)); // Noten sind schon geladen und müssen nicht aus dem jsonFile wiederhergestellt werden, also false mitgeben
+            });
         }
 
         private void RelativePanel_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -281,8 +198,6 @@ namespace QISReader
                 ViewModel.LoginButtonClicked.Execute(null);
                 e.Handled = true; // ansonsten wird der Command zweimal ausgeführt, warum auch immer...
             }
-            
-                
         }
     }
 }

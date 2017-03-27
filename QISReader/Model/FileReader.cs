@@ -13,6 +13,7 @@ namespace QISReader.Model
     {
         public async Task<string> readNotenPage()
         {
+            //Rechtsklick auf den File, "Properties", -> "Build Action" = "Content", dann kann man Files so einlesen
             var notenFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Resources/noten.html"));
             string result = await Windows.Storage.FileIO.ReadTextAsync(notenFile);
             return result;

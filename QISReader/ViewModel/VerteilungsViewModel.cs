@@ -13,7 +13,9 @@ namespace QISReader.ViewModel
 {
     public class VerteilungsViewModel
     {
-        NotenParser globalNotenParser;
+        private List<int> verteilung { get; set; }
+        private float durchschnitt { get; set; }
+        private float eigeneNote { get; set; }
 
         public float[] NotenBalkenHeights { get; }
         public int[] NotenAnzahlText { get; }
@@ -38,17 +40,21 @@ namespace QISReader.ViewModel
         private SolidColorBrush whiteBrush = new SolidColorBrush(Colors.White);
         private SolidColorBrush blackBrush = new SolidColorBrush(Colors.DarkGray);
 
-
-
+        // Arrays initialisieren
         public VerteilungsViewModel()
         {
-            Debug.WriteLine("VerteilungsViewModel constructed");
-            globalNotenParser = App.LogicManager.NotenParser;
             NotenBalkenHeights = new float[NOTENANZAHL];
             NotenAnzahlText = new int[NOTENANZAHL];
             NotenAnzahlDrüber = new bool[NOTENANZAHL]; // bool-Arrays sind nach dem Initialisieren false
             NotenAnzahlTextMargins = new Thickness[NOTENANZAHL];
             NotenAnzahlTextColors = new SolidColorBrush[NOTENANZAHL];
+        }
+
+        internal void InsertValues(List<int> verteilung, float durchschnitt, float eigeneNote)
+        {
+            this.verteilung = verteilung;
+            this.durchschnitt = durchschnitt;
+            this.eigeneNote = eigeneNote;
         }
 
         public void Init(bool has3Rows, int maxBeschriftung, float gridHeight, float anzahlBeschriftungAbstandnachOben, float anzahlBeschriftungHeight, float firstGridHeight, ResourceDictionary resources)
@@ -84,12 +90,12 @@ namespace QISReader.ViewModel
             float scaler = gridHeight / maxBeschriftung;
             for(int i=0; i<NOTENANZAHL; i++)
             {
-                NotenAnzahlText[i] = globalNotenParser.AktNotenSpiegel.Verteilung[i];
-                float aktBalkenHeight = globalNotenParser.AktNotenSpiegel.Verteilung[i] * scaler;
+                NotenAnzahlText[i] = verteilung[i];
+                float aktBalkenHeight = verteilung[i] * scaler;
                 NotenBalkenHeights[i] = aktBalkenHeight;
 
                 // Text für Anzahl-Beschriftung setzen
-                NotenAnzahlText[i] = globalNotenParser.AktNotenSpiegel.Verteilung[i];
+                NotenAnzahlText[i] = verteilung[i];
                 // Farbe und Position der Anzahl pro Note bestimmen:
                 float aktNotenAnzahlTopMargin = gridHeight - aktBalkenHeight + anzahlBeschriftungAbstandnachOben;
                 NotenAnzahlTextColors[i] = whiteBrush;
@@ -106,7 +112,6 @@ namespace QISReader.ViewModel
         private void calculateDurchschnittData(float firstGridHeight, float gridHeight, ResourceDictionary resources, float anzahlBeschriftungAbstandnachOben, float anzahlBeschriftungHeight)
         {
             //zuerst die Platzierung des Durchschnitts berechnen
-            float durchschnitt = globalNotenParser.AktNotenSpiegel.Durchschnitt;
             DurchschnittText = "Durchschnitt: " + durchschnitt;
             float topmargin = firstGridHeight + gridHeight - (anzahlBeschriftungAbstandnachOben*2) - anzahlBeschriftungHeight;
             int index = 0;
@@ -148,8 +153,7 @@ namespace QISReader.ViewModel
 
         private void calculateEigeneNoteData(float firstGridHeight, float gridHeight, ResourceDictionary resources, float anzahlBeschriftungAbstandnachOben, float anzahlBeschriftungHeight)
         {
-            //zuerst die Platzierung des Durchschnitts berechnen
-            float eigeneNote = globalNotenParser.AktNotenSpiegel.EigeneNote;
+            //zuerst die Platzierung der eigenen Note berechnen
             EigeneNoteText = "Deine Note: " + eigeneNote;
             float topmargin = firstGridHeight + gridHeight - (anzahlBeschriftungAbstandnachOben*2) - anzahlBeschriftungHeight;
             int index = 0;

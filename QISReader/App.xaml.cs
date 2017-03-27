@@ -18,6 +18,9 @@ using QISReader.Model;
 using Windows.UI.Core;
 using QISReader.ViewModel;
 using QISReader.View;
+using Windows.Storage;
+using QisReaderClassLibrary;
+using System.Threading.Tasks;
 
 namespace QISReader
 {
@@ -28,7 +31,6 @@ namespace QISReader
     {
         public static LogicManager LogicManager;
         public static NavigationManager NavigationManager { get; set; }
-        private LoginDataSaver dataSaver;
         private Frame contentFrame;
 
 
@@ -41,9 +43,12 @@ namespace QISReader
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+
+            //BackgroundTaskManager.Unregister();
+
             LogicManager = new LogicManager();
-            dataSaver = LogicManager.LoginDataSaver;
             NavigationManager = new NavigationManager();
+            InitSettings();
         }
 
         /// <summary>
@@ -51,14 +56,9 @@ namespace QISReader
         /// werden z. B. verwendet, wenn die Anwendung gestartet wird, um eine bestimmte Datei zu öffnen.
         /// </summary>
         /// <param name="e">Details über Startanforderung und -prozess.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-//#if DEBUG
-//            if (System.Diagnostics.Debugger.IsAttached)
-//            {
-//                this.DebugSettings.EnableFrameRateCounter = true;
-//            }
-//#endif
+            await LogicManager.InitLogic();
             Frame rootFrame = Window.Current.Content as Frame;
 
             // App-Initialisierung nicht wiederholen, wenn das Fenster bereits Inhalte enthält.
@@ -86,14 +86,10 @@ namespace QISReader
                     // Wenn der Navigationsstapel nicht wiederhergestellt wird, zur ersten Seite navigieren
                     // und die neue Seite konfigurieren, indem die erforderlichen Informationen als Navigationsparameter
                     // übergeben werden
-                    LoginData loginData = dataSaver.GetLoginData();
-                    if (loginData == null)
-                        rootFrame.Navigate(typeof(LoginPage), e.Arguments);
+                    if (await JsonManager.FileExists(GlobalValues.FILE_NOTEN))
+                        rootFrame.Navigate(typeof(NavigationPage));
                     else
-                    {
-                        rootFrame.Navigate(typeof(NavigationPage), true);
-                    }
-                        
+                        rootFrame.Navigate(typeof(LoginPage), e.Arguments);                        
                 }
                 // Sicherstellen, dass das aktuelle Fenster aktiv ist
                 Window.Current.Activate();
@@ -134,6 +130,15 @@ namespace QISReader
             if (OnBackRequested != null) { OnBackRequested(this, e); }
 
             NavigationManager.ManageBackRequest(e);
+        }
+
+        private void InitSettings()
+        {
+            if (ApplicationData.Current.LocalSettings.Values[GlobalValues.SETTINGS_AUTOUPDATE] == null)
+                ApplicationData.Current.LocalSettings.Values[GlobalValues.SETTINGS_AUTOUPDATE] = true;
+            if (ApplicationData.Current.LocalSettings.Values[GlobalValues.SETTINGS_UPDATERATE] == null)
+                ApplicationData.Current.LocalSettings.Values[GlobalValues.SETTINGS_UPDATERATE] = GlobalValues.UPDATERATE_ALLE_30_MINUTEN;
+                //ApplicationData.Current.LocalSettings.Values[GlobalValues.SETTINGS_UPDATERATE] = GlobalValues.UPDATERATE_ALLE_2_STUNDEN;
         }
     }
 }

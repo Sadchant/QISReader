@@ -1,5 +1,6 @@
 ﻿using QISReader.Model;
 using QISReader.ViewModel;
+using QisReaderClassLibrary;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,8 +26,7 @@ namespace QISReader.View
     /// </summary>
     public sealed partial class DatenPage : Page
     {
-        private NotenParser globalNotenParser;
-
+        private DatenViewModel viewModel;
         public DatenViewModel ViewModel { get; set; }
 
         public DatenPage()
@@ -36,8 +36,13 @@ namespace QISReader.View
             {
                 ViewModel = DataContext as DatenViewModel;
             };
+            viewModel = (DatenViewModel)DataContext; // ja das muss so!
+        }
 
-            globalNotenParser = App.LogicManager.NotenParser;
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            NotenDetails notenDetails = e.Parameter as NotenDetails;
+            viewModel.Init(notenDetails.DatenBeschriftung, notenDetails.DatenInhalt, notenDetails.Überschrift);
         }
     }
 }

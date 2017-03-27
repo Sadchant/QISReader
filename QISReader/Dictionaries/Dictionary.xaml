@@ -18,7 +18,7 @@
     <SolidColorBrush x:Key="befriedigendDarkBrush" Color="#BFA500" />
     <SolidColorBrush x:Key="ausreichendDarkBrush" Color="#BF6900" />
     <SolidColorBrush x:Key="durchgefallenDarkBrush" Color="#BF1600" />
-    <SolidColorBrush x:Key="bestandenDarkBrush" Color="#004BBC" />
+    <SolidColorBrush x:Key="bestandenDarkBrush" Color="#004BDC" />
 
 
 </ResourceDictionary>

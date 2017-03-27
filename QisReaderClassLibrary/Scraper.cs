@@ -11,6 +11,7 @@ using Windows.Storage.Pickers;
 using Windows.Storage;
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using QisReaderClassLibrary;
 
 namespace QisReaderBackground
 { 
@@ -30,6 +31,18 @@ namespace QisReaderBackground
 
         private string aktAsi;
         private string aktDegree;
+
+        public static async Task InitScraper(Scraper scraper)
+        {
+            Dictionary<string, string> hochschulDict = await JsonManager.LoadFromResources<Dictionary<string, string>>(GlobalValues.HOCHSCHULDICTFILENAME);
+            scraper.Baseurl = hochschulDict[(string)ApplicationData.Current.LocalSettings.Values[GlobalValues.SETTINGS_HOCHSCHULE]]; // in localSettings wird der key abgelegt
+
+            LoginDataSaver loginDataSaver = new LoginDataSaver();
+            LoginData loginData = loginDataSaver.GetLoginData();
+            if (loginData == null) return; // sollte eigentlich nicht passieren, Backgroundtask sollte immer erst angestoßen werden, nachdem Username + Passwort eingetragen wurde
+            scraper.Username = loginData.Username;
+            scraper.Password = loginData.Password;
+        }
 
         // gibt den mit Cookie initialisierten
         public async Task Login()

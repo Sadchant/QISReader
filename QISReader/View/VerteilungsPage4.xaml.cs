@@ -41,13 +41,15 @@ namespace QISReader
             {
                 ViewModel = DataContext as VerteilungsViewModel;
             };
-            viewModel = (VerteilungsViewModel)DataContext;
+            viewModel = (VerteilungsViewModel)DataContext; // ja das muss so!
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            int maxNumber = (int)e.Parameter;
-            viewModel.Init(false, maxNumber, gridHeight, anzahlBeschriftungAbstandnachOben, anzahlBeschriftungHeight, firstGridHeight, Resources);
+            bool has3rows = false;
+            VerteilungsPageNavigationsArgs navigationArgs = e.Parameter as VerteilungsPageNavigationsArgs;
+            viewModel.InsertValues(navigationArgs.Verteilung, navigationArgs.Durchschnitt, navigationArgs.EigeneNote);
+            viewModel.Init(has3rows, navigationArgs.MaxNotenSpiegelBeschriftungsNumber, gridHeight, anzahlBeschriftungAbstandnachOben, anzahlBeschriftungHeight, firstGridHeight, Resources);
         }
     }
 }

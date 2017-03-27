@@ -12,7 +12,7 @@ namespace QisReaderClassLibrary
     public class JsonManager
     {
         // speichert die angezeigte Notenliste, die aus einer Fach-Liste besteht in ein json-File ab
-        public async void Save<T>(T saveThis, string filename)
+        public static async Task Save<T>(T saveThis, string filename)         // speichert die angezeigte Notenliste, die aus einer Fach-Liste besteht in ein json-File ab
         {
             StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
             StorageFile storageFile;
@@ -32,7 +32,7 @@ namespace QisReaderClassLibrary
         }
 
         // läd die Fach-Liste aus dem json-File
-        public async Task<T> Load<T>(string filename)
+        public static async Task<T> Load<T>(string filename)
         {
             StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
             StorageFile storageFile;
@@ -42,9 +42,26 @@ namespace QisReaderClassLibrary
             storageFile = await storageFolder.GetFileAsync(filename);
             using (Stream stream = await storageFile.OpenStreamForReadAsync())
             {
-                DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(List<Fach>));
+                DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
                 return (T)serializer.ReadObject(stream);
             }
+        }
+
+        // läd die Fach-Liste aus dem json-File
+        public static async Task<T> LoadFromResources<T>(string filename)
+        {
+            StorageFile storageFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Resources/" + filename));
+            using (Stream stream = await storageFile.OpenStreamForReadAsync())
+            {
+                DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+                return (T)serializer.ReadObject(stream);
+            }
+        }
+
+        public static async Task<bool> FileExists(string filename)
+        {
+            StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
+            return (await storageFolder.TryGetItemAsync(filename) != null);
         }
     }
 }

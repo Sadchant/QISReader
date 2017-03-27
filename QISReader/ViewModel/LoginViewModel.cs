@@ -1,6 +1,8 @@
 ﻿using QISReader.Model;
+using QisReaderClassLibrary;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -10,7 +12,7 @@ using Windows.Storage;
 
 namespace QISReader.ViewModel
 {
-    public class LoginViewModel
+    public class LoginViewModel : INotifyPropertyChanged
     {
         private List<string> _hochschulen;
         private string _selectedHochschule;
@@ -20,53 +22,40 @@ namespace QISReader.ViewModel
 
         private bool loggingIn = false; //wird auf true gesetzt, wenn man sich anfängt einzuloggen, damit man es währenddessen nicht wiederholen kann
 
-        public delegate void EventMethod();
-        public event EventMethod StartAnmeldungEvent;
-        public event EventMethod WrongLoginEvent;
-        public event EventMethod KeineVerbindungEvent;
-        public event EventMethod LoginFehlerEvent;
-        public event EventMethod StartNotenNavigationEvent;
-        public event EventMethod NotenNavigationsFehlerEvent;
-        public event EventMethod StartNotenVerarbeitungEvent;
-        public event EventMethod NotenVerarbeitungFehlerEvent;
-        public event EventMethod NotenVerarbeitungFertigEvent;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        Scraper globalScraper;
-        NotenParser globalNotenParser;
-        FachManager globalFachManager;
+        ReadQis readQisBackgroundTaskManager;
 
-
-        private void addHochschulen()
+        public LoginViewModel()
         {
             _hochschulen = new List<string>();
-            _hochschulen.Add("Hochschule RheinMain");
-            _hochschulen.Add("Hochschule Kaiserslautern");
-            _hochschulen.Add("Hochschule Darmstadt");
-            _hochschulen.Add("Hochschule Mannheim");
-            _hochschulen.Add("Hochschule für angewandte Wissenschaften Würzburg-Schweinfurt");
-            _hochschulen.Add("Fachhochschule Bingen");
-            _hochschulen.Add("Hochschule Geisenheim");
+            // wenn es Fehler gibt, ist man sich nicht mehr am einloggen
+            App.LogicManager.ReadQis.KeineVerbindungEvent += SetLoggingInFalse;
+            App.LogicManager.ReadQis.LoginFehlerEvent += SetLoggingInFalse;
+            App.LogicManager.ReadQis.NotenNavigationsFehlerEvent += SetLoggingInFalse;
+            App.LogicManager.ReadQis.NotenVerarbeitungFehlerEvent += SetLoggingInFalse;
+            App.LogicManager.ReadQis.WrongLoginEvent += SetLoggingInFalse;
 
-            _hochschulen.Add("Hochschule RheinMain");
-            _hochschulen.Add("Hochschule Kaiserslautern");
-            _hochschulen.Add("Hochschule Darmstadt");
-            _hochschulen.Add("Hochschule Mannheim");
-            _hochschulen.Add("Hochschule für angewandte Wissenschaften Würzburg-Schweinfurt");
-            _hochschulen.Add("Fachhochschule Bingen");
-            _hochschulen.Add("Hochschule Geisenheim");
+            // wenn es fertig ist, ist man sich auch nicht mehr am einloggenawait Task.Delay(TimeSpan.FromMilliseconds(10));
+            App.LogicManager.ReadQis.NotenVerarbeitungFertigEvent += SetLoggingInFalse; 
         }
 
-        private async Task<string> readInfoTextFile()
+        private async Task<string> ReadInfoTextFile()
         {
             var notenFile = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Resources/InfoText.txt"));
             string result = await FileIO.ReadTextAsync(notenFile);
             return result;
         }
 
-        public async void loadContent()
+        public async void LoadContent()
         {
-            addHochschulen();
-            _infotext = await readInfoTextFile();
+            //await Task.Delay(TimeSpan.FromMilliseconds(3000));
+            Debug.WriteLine("lade Hochschulen");
+            Dictionary<string, string> hochschulDict = await JsonManager.LoadFromResources<Dictionary<string, string>>(GlobalValues.HOCHSCHULDICTFILENAME);
+            _hochschulen = hochschulDict.Keys.ToList(); // die Values sind uninteressant, da sie die Links beinhalten
+            _infotext = await ReadInfoTextFile();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Hochschulnamen"));
+            Debug.WriteLine("fertig geladen");
         }
 
 
@@ -132,7 +121,6 @@ namespace QISReader.ViewModel
 
         private async void Login()
         {
-            Debug.WriteLine("fange an mit login");
             // wenn man sich am einloggen ist, blocke weitere Login-Versuche
             if (loggingIn)
                 return;
@@ -140,71 +128,20 @@ namespace QISReader.ViewModel
             loggingIn = true;
 
             // Hole aktuelle Logik-Objekte
-            globalScraper = App.LogicManager.Scraper;
-            globalNotenParser = App.LogicManager.NotenParser;
-            globalFachManager = App.LogicManager.FachManager;
+            readQisBackgroundTaskManager = App.LogicManager.ReadQis;
 
-            globalScraper.Username = _nutzername;
-            globalScraper.Password = _passwort;
-            globalScraper.Baseurl = "https://qis.hs-rm.de/qisserver/rds?state=";
-            
-            //### Anmedlung
-            string htmlPage; // hier wird die vom Scrapen erzeugte HTML-Seite drin gespeichert
-            List<string> notenStringList;
-            StartAnmeldungEvent();
-            try
-            {
-                //komischer Workaround, damit "Anmeldung..." angezeigt wird
-                await Task.Delay(TimeSpan.FromMilliseconds(10));
-                await globalScraper.Login();
-            }
-            catch (Exception exception)
-            {
-                if (exception is WrongLoginException)
-                    WrongLoginEvent();
-                else if (exception is AggregateException)
-                    KeineVerbindungEvent();
-                else
-                    LoginFehlerEvent();
-                // Fehler, also ist man sich nicht mehr am einloggen
-                loggingIn = false;
-                return;
-            }
-            Debug.WriteLine("starte noten navigation");
-            // ### zu Noten navigieren, Ergebnis ist String mit Noten-Html-Seite
-            StartNotenNavigationEvent();
-            try
-            {
-                htmlPage = await globalScraper.NavigateQis();
-            }
-            catch (Exception exception)
-            {
-                if (exception is AggregateException)
-                    KeineVerbindungEvent();
-                else //ansonsten ist es eine ScrapQISException oder eine normale Exception
-                    NotenNavigationsFehlerEvent();
-                // Fehler, also ist man sich nicht mehr am einloggen
-                loggingIn = false;
-                return;
-            }
+            ApplicationData.Current.LocalSettings.Values[GlobalValues.SETTINGS_HOCHSCHULE] = _selectedHochschule; // abspeichern in LocalSettings, damit der Backgroundtask damit arbeiten kann
+            LoginDataSaver loginDataSaver = new LoginDataSaver();
+            loginDataSaver.SetLoginData(_nutzername, _passwort);
 
-            Debug.WriteLine("starte noten verarbeitung");
-            // ### Noten verarbeiten, Ergebnis ist eine Liste mit Fach-Objekten
-            StartNotenVerarbeitungEvent();
-            try
-            {
-                notenStringList = globalNotenParser.parseNoten(htmlPage);
-                globalFachManager.buildFachObjektList(notenStringList);
-            }
-            catch (Exception) // hier sollte eigentlich nichts schief gehen, wenn doch ist mein htmlParser fehlerhaft!
-            {
-                NotenVerarbeitungFehlerEvent();
-                // Fehler, also ist man sich nicht mehr am einloggen
-                loggingIn = false;
-                return;
-            }
-            NotenVerarbeitungFertigEvent();
-            Debug.WriteLine("alles fertig");
+            // starte den Login im BackgroundTask
+            await App.LogicManager.ReadQis.StartReadQis();
+        }
+
+        // sollte es einen Fehler geben, ist man sich nicht mehr am einloggen
+        private void SetLoggingInFalse()
+        {
+            loggingIn = false;
         }
     }
 }

@@ -1,10 +1,13 @@
-﻿using System;
+﻿using QisReaderClassLibrary;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -51,8 +54,40 @@ namespace QISReader.View
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            App.LogicManager.LoginDataSaver.Logout();
+            LoginDataSaver loginDataSaver = new LoginDataSaver();
+            loginDataSaver.Logout();
             LogoutEvent();
         }
+
+        private async void AutoUpdateSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            ApplicationData.Current.LocalSettings.Values[GlobalValues.SETTINGS_AUTOUPDATE] = AutoUpdateSwitch.IsOn;
+            await App.LogicManager.UpdateData.UpdateTrigger();
+        }
+
+        private async void UpdateRateComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            switch (UpdateRateComboBox.SelectedIndex)
+            {
+                case 0:
+                    ApplicationData.Current.LocalSettings.Values[GlobalValues.SETTINGS_UPDATERATE] = GlobalValues.UPDATERATE_ALLE_30_MINUTEN;
+                    break;
+                case 1:
+                    ApplicationData.Current.LocalSettings.Values[GlobalValues.SETTINGS_UPDATERATE] = GlobalValues.UPDATERATE_EINMAL_PRO_STUNDE;
+                    break;
+                case 2:
+                    ApplicationData.Current.LocalSettings.Values[GlobalValues.SETTINGS_UPDATERATE] = GlobalValues.UPDATERATE_ALLE_2_STUNDEN;
+                    break;
+                case 3:
+                    ApplicationData.Current.LocalSettings.Values[GlobalValues.SETTINGS_UPDATERATE] = GlobalValues.UPDATERATE_ALLE_6_STUNDENN;
+                    break;
+                case 4:
+                    ApplicationData.Current.LocalSettings.Values[GlobalValues.SETTINGS_UPDATERATE] = GlobalValues.UPDATERATE_EINMAL_PRO_TAG;
+                    break;               
+            }
+            await App.LogicManager.UpdateData.UpdateTrigger();
+        }
+
+       
     }
 }

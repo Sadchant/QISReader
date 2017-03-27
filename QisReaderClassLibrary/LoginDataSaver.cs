@@ -21,7 +21,10 @@ namespace QisReaderClassLibrary
         {
             PasswordCredential loginCredential = GetCredentialFromLocker();
             if (loginCredential != null)
+            {
+                loginCredential.RetrievePassword();
                 return new LoginData { Username = loginCredential.UserName, Password = loginCredential.Password };
+            }                
             else
                 return null;
         }

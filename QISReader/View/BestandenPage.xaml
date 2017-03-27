@@ -32,7 +32,7 @@
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
-        <Rectangle Grid.Row="1" Fill="{StaticResource bestandenBrush}" />
+        <Rectangle Grid.Row="1" Fill="{StaticResource bestandenDarkBrush}" />
         <Rectangle Grid.Row="1" Fill="{StaticResource durchgefallenBrush}" HorizontalAlignment="Right" Width="{x:Bind ViewModel.NichtBestandenRectWidth}"/>
         <TextBlock Foreground="{StaticResource bestandenDarkBrush}" HorizontalAlignment="Left" Text="{x:Bind ViewModel.BestandenText}" Margin="0,0,0,10" VerticalAlignment="Bottom"/>
         <TextBlock Foreground="{StaticResource durchgefallenDarkBrush}" HorizontalAlignment="Right" Text="{x:Bind ViewModel.NichtBestandenText}" Margin="0,0,0,10" VerticalAlignment="Bottom"/>

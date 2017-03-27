@@ -32,5 +32,13 @@ namespace QisReaderClassLibrary
             AnzahlNoten = notenCounter;
             LastRefreshTime = DateTime.Now;
         }
+
+        public bool IsEqual(NotenData notenData)
+        {
+            bool equal = true;
+            if (notenData.AnzahlEinträge != AnzahlEinträge || notenData.AnzahlNoten != AnzahlNoten)
+                equal = false;
+            return equal;
+        }
     }
 }

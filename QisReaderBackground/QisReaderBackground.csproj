@@ -108,11 +108,9 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BackgroundTasks\ReadQisBackground.cs" />
-    <Compile Include="BackgroundTasks\UpdateDataBackground.cs" />
-    <Compile Include="Model\HtmlParser.cs" />
+    <Compile Include="ReadQisBackground.cs" />
+    <Compile Include="UpdateDataBackground.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Model\Scraper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\QisReaderClassLibrary\QisReaderClassLibrary.csproj">
@@ -120,6 +118,7 @@
       <Name>QisReaderClassLibrary</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

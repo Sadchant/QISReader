@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QisReaderClassLibrary;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -33,17 +34,12 @@ namespace QISReader.View
             EinstellungenPage.LogoutEvent += LogoutNavigation; 
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            // in den NavigationEventArgs wird mitgegeben, ob nach App-Start direkt zur NavigationPage navigiert wurde
-            // etwas umständlich, kann wieder in die app-behind wenns auf dem smartphone nichts bringt
-            Debug.WriteLine("Zur NavigationPage navigated");
-            if ((bool)e.Parameter)
-            {
-                App.LogicManager.FachManager.FachListe = await App.LogicManager.NotenDataSaver.LoadNoten();
-            }
             NotenListBoxItem.IsSelected = true;
             TopListBox.SelectedItem = NotenListBoxItem;
+            // wenn zur NavigationPage navigiert wurde, wurden noten erfolgreich eingelesen werden und das Autoupdate kann initialisiert werden (falls noch nicht bei einem früheren Start)
+            App.LogicManager.UpdateData.InitTrigger();
         }
 
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
@@ -88,7 +84,6 @@ namespace QISReader.View
         private void LogoutNavigation()
         {
             Frame.Navigate(typeof(LoginPage));
-            App.LogicManager.InitLogic();
         }
     }
 }

@@ -24,7 +24,9 @@
         <RelativePanel RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True">
             <StackPanel Name="HochschulauswahlStackPanel" RelativePanel.AlignHorizontalCenterWithPanel="True">
                 <TextBlock Text="Wähle deine Hochschule:" Margin="10" FontSize="16" FontWeight="Bold"/>
-                <ListBox Name="MyListBox" SelectionMode="Single" SelectedItem="{x:Bind ViewModel.SelectedHochschule, Mode=TwoWay}" Width="500" Height="300" Margin="10" ItemsSource="{Binding Hochschulnamen}"/>
+                
+                <!--ItemsSource benutzt Binding statt x:Bind, damit beim kleinen Delay beim Laden der Hochschulliste die ListBox nachträglich aktualisiert wird-->
+                <ListBox Name="MyListBox" SelectionMode="Single" SelectedItem="{x:Bind ViewModel.SelectedHochschule, Mode=TwoWay}" Width="500" Height="300" Margin="10" ItemsSource="{Binding Hochschulnamen, Mode=OneWay}"/>
             </StackPanel>
 
             <TextBox Name="UsernameTextBox" RelativePanel.Below="HochschulauswahlStackPanel" RelativePanel.AlignHorizontalCenterWith="HochschulauswahlStackPanel" Margin="10,20,10,10" Width="400" GotFocus="UsernameTextBox_GotFocus" Text="{x:Bind ViewModel.Nutzername, Mode=TwoWay}" />

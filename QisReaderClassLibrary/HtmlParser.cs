@@ -9,20 +9,18 @@ using System.Threading.Tasks;
 
 namespace QisReaderBackground
 {
-    public class KeinNotenSpiegelException : Exception { }
-
     public class HtmlParser
     {
         public List<Fach> FachListe { get; set; }
         public Dictionary<int, string> LinkDict { get; set; }
-        public Dictionary<int, NotenDetails> NotenSpiegelDict { get; set; }
+        public Dictionary<int, NotenDetails> NotenDetailsDict { get; set; }
 
         //Liste und Dictioanries initialisieren
         public HtmlParser()
         {
             FachListe = new List<Fach>();
             LinkDict = new Dictionary<int, string>();
-            NotenSpiegelDict = new Dictionary<int, NotenDetails>();
+            NotenDetailsDict = new Dictionary<int, NotenDetails>();
         }
 
         private string GetSubStringBetween(string source, string beginString, string endString)
@@ -95,10 +93,19 @@ namespace QisReaderBackground
                     {
                         Regex regex = new Regex(@"<a href=""(.*)""><img"); // das Pattern, wo der Link zum Notenspiegel liegt
                         Match htmlMatch = regex.Match(aktTd);
+
+
+                        int fachnummer = Int32.Parse(aktCleanedTdList.First()); // das erste Element ist die Prüsfungsnummer, die schon ausgelesen wurde, wenn ein Link gefunden wird
+                        fachnummer *= 100;
+                        Match notenMatch = new Regex(@">(.*)<a").Match(aktTd); // das aktuelle Feld ist die Note, also lese die Note aus
+                        string notenString = notenMatch.Groups[1].Value;
+                        float note = float.Parse(notenString);
+                        fachnummer += (int)(note * 10); // und hänge sie an die prüfungsnummer, um eine eindeutige ID zu bekommen
+
+                        LinkDict.Add(fachnummer, htmlMatch.Groups[1].Value);
                         try
                         {
-                            int fachnummer = Int32.Parse(aktCleanedTdList.First()); // das erste Element ist die Prüsfungsnummer, die schon ausgelesen wurde, wenn ein Link gefunden wird
-                            LinkDict.Add(fachnummer, htmlMatch.Groups[1].Value);
+                            
                         }
                         catch { } // wenn das link speichern nicht funktioniert da keine prüfungsnummer vorliegt (also Int32.Parse fehlschlägt), fahre einfach fort
                         match = new Regex(@">(.*)<a").Match(aktTd);
@@ -108,6 +115,12 @@ namespace QisReaderBackground
                     if (match != null && match.Success && match.Groups.Count > 1)
                     {
                         aktTdString = match.Groups[1].Value;
+                        if (aktTdString.Contains('>')) // sollte aktTDString formatiert sein: <b>1110</b>, entferne die html-Formatierung
+                        {
+                            match = new Regex(@"<[^>]*>([^<]*)<\/").Match(aktTd); // Lanys crazy Regex
+                            if (match != null && match.Success && match.Groups.Count > 1)
+                                aktTdString = match.Groups[1].Value;
+                        }
                     }
                     else
                         aktTdString = "";
@@ -133,16 +146,37 @@ namespace QisReaderBackground
             Fach fachHeader = new Fach();
             memberId = 0;
             if (!string.IsNullOrEmpty(daten[memberId]))
-                fachHeader.Id = int.Parse(daten[memberId]);
-
+            {
+                try
+                {
+                    fachHeader.Id = int.Parse(daten[memberId]);
+                }
+                catch
+                {
+                    fachHeader.Id = null;
+                }
+            }
             memberId = 1;
             if (!string.IsNullOrEmpty(daten[memberId]))
                 fachHeader.FachName = daten[memberId];
 
             memberId = 2;
             if (!string.IsNullOrEmpty(daten[memberId]))
-                fachHeader.Note = float.Parse(daten[memberId]);
-
+            {
+                try
+                {
+                    fachHeader.Note = float.Parse(daten[memberId]);
+                    if (fachHeader.Id != null) // an die id auch die note anhängen, damit es der idberechnung für das linkdictionary entspricht
+                    {
+                        fachHeader.Id *= 100;
+                        fachHeader.Id += (int)(fachHeader.Note * 10);
+                    }
+                }
+                catch
+                {
+                    fachHeader.Note = null;
+                }
+            }
             memberId = 3;
             if (!string.IsNullOrEmpty(daten[memberId]))
             {
@@ -154,7 +188,16 @@ namespace QisReaderBackground
             }
             memberId = 4;
             if (!string.IsNullOrEmpty(daten[memberId]))
-                fachHeader.Cp = float.Parse(daten[memberId]);
+            {
+                try
+                {
+                    fachHeader.Cp = float.Parse(daten[memberId]);
+                }
+                catch
+                {
+                    fachHeader.Cp = null;
+                }
+            }            
 
             return fachHeader;
         }
@@ -165,8 +208,16 @@ namespace QisReaderBackground
             FachInhalt fachInhalt = new FachInhalt();
             memberId = 0;
             if (!string.IsNullOrEmpty(daten[memberId])) // sollte das Feld nicht belegt sein ist ID dank dem int? ID standartmäßig null und nicht 0
-                fachInhalt.Id = int.Parse(daten[memberId]);
-
+            {
+                try // wenn geparsed wird, mache den code robuster indem es mit try-catch abgesichert wird (falls doch noch irgendetwas zusätzliches in der zelle steht was keine zahl ist)
+                {
+                    fachInhalt.Id = int.Parse(daten[memberId]);
+                }
+                catch
+                {
+                    fachInhalt.Id = null;
+                }
+            }
             memberId = 1;
             if (!string.IsNullOrEmpty(daten[memberId]))
                 fachInhalt.FachName = daten[memberId];
@@ -177,8 +228,21 @@ namespace QisReaderBackground
 
             memberId = 3;
             if (!string.IsNullOrEmpty(daten[memberId]))
-                fachInhalt.Note = float.Parse(daten[memberId]);
-
+            {
+                try
+                {
+                    fachInhalt.Note = float.Parse(daten[memberId]);
+                    if (fachInhalt.Id != null) // an die id auch die note anhängen, damit es der idberechnung für das linkdictionary entspricht
+                    {
+                        fachInhalt.Id *= 100;
+                        fachInhalt.Id += (int)(fachInhalt.Note * 10);
+                    }
+                }
+                catch
+                {
+                    fachInhalt.Note = null;
+                }
+            }
             memberId = 4;
             if (!string.IsNullOrEmpty(daten[memberId]))
             {
@@ -189,11 +253,29 @@ namespace QisReaderBackground
             }
             memberId = 5;
             if (!string.IsNullOrEmpty(daten[memberId]))
-                fachInhalt.Cp = float.Parse(daten[memberId]);
-
+            {
+                try
+                {
+                    fachInhalt.Cp = float.Parse(daten[memberId]);
+                }
+                catch
+                {
+                    fachInhalt.Cp = null;
+                }
+            }
             memberId = 6;
             if (!string.IsNullOrEmpty(daten[memberId]))
-                fachInhalt.Versuch = int.Parse(daten[6]);
+            {
+                try
+                {
+                    fachInhalt.Versuch = int.Parse(daten[6]);
+                }
+                catch
+                {
+                    fachInhalt.Versuch = null;
+                }
+            }
+            
             return fachInhalt;
         }
 
@@ -269,7 +351,7 @@ namespace QisReaderBackground
                 return;
             }
                 
-            string table = GetSubStringBetween(htmlPage, @"<table border=""0"" align=""left"" width=""60%"">", "</table>");
+            string table = GetSubStringBetween(htmlPage, @"width=""60%"">", "</table>");
             table = Regex.Replace(table, @"\t|\n|\r", ""); // Aller Whitespace muss entfernt werden, sonst kann das HTML später schlecht geparsed werden
 
             string begintr = "<tr";
